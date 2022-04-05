@@ -77,7 +77,6 @@ func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		id, _ := strconv.Atoi(c.Param("id"))
 
@@ -101,23 +100,28 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if idToken != id {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
 
-		users, err := uh.userUseCase.GetUserById(id)
+		user, err := uh.userUseCase.GetUserById(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
 
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get user by id", users))
+		responseUser := map[string]interface{}{
+			"ID":           user.ID,
+			"name":         user.Name,
+			"email":        user.Email,
+			"phone_number": user.PhoneNumber,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get user by id", responseUser))
 	}
 }

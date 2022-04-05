@@ -28,7 +28,7 @@ func (ur *UserRepository) CreateUser(request _entities.User) (_entities.User, er
 
 func (ur *UserRepository) GetUserById(id int) (_entities.User, error) {
 	var users _entities.User
-	tx := ur.DB.Model(&users).Select("name", "email").Where("id = ?", id).Find(&users)
+	tx := ur.DB.Find(&users, id)
 	if tx.Error != nil {
 		return users, tx.Error
 	}
