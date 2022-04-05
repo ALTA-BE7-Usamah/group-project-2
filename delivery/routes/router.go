@@ -14,7 +14,6 @@ func RegisterAuthPath(e *echo.Echo, ah *_authHandler.AuthHandler) {
 }
 
 func RegisterUserPath(e *echo.Echo, uh _userHandler.UserHandler) {
-	e.GET("/users", uh.GetAllHandler(), _middlewares.JWTMiddleware())
 	e.GET("/users/:id", uh.GetUserByIdHandler(), _middlewares.JWTMiddleware())
 	e.POST("/users", uh.CreateUserHandler())
 	e.PUT("/users/:id", uh.UpdateUserHandler(), _middlewares.JWTMiddleware())

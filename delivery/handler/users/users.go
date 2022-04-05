@@ -23,35 +23,25 @@ func NewUserHandler(u _userUseCase.UserUseCaseInterface) UserHandler {
 	}
 }
 
-func (uh *UserHandler) GetAllHandler() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		users, err := uh.userUseCase.GetAll()
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
-		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all users", users))
-	}
-}
-
 func (uh *UserHandler) CreateUserHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 		var param _entities.User
 
-	err := c.Bind(&param)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-	}
-		users, err := uh.userUseCase.CreateUser(param)
+		err := c.Bind(&param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create user", users))
+		_, error := uh.userUseCase.CreateUser(param)
+		if error != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success create user"))
 	}
 }
 
 func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 
 		idToken, errToken := _middlewares.ExtractToken(c)
@@ -67,10 +57,10 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 
-	err := c.Bind(&param)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-	}
+		err := c.Bind(&param)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
 		users, err := uh.userUseCase.UpdateUser(id, param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -80,7 +70,7 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 }
 
 func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 
 		idToken, errToken := _middlewares.ExtractToken(c)
@@ -88,13 +78,12 @@ func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		fmt.Println("id token", idToken)
-		
+
 		id, _ := strconv.Atoi(c.Param("id"))
 
 		if idToken != id {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		
 
 		err := uh.userUseCase.DeleteUser(id)
 		if err != nil {
@@ -105,7 +94,7 @@ func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
 }
 
 func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 
 		idToken, errToken := _middlewares.ExtractToken(c)
@@ -113,22 +102,22 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		fmt.Println("id token", idToken)
-		
+
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if idToken != id {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		
+
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
-		
+
 		users, err := uh.userUseCase.GetUserById(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		
+
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get user by id", users))
 	}
 }
