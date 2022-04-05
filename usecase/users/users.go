@@ -33,9 +33,29 @@ func (uuc *UserUseCase) CreateUser(request _entities.User) (_entities.User, erro
 	return users, err
 }
 
-func (uuc *UserUseCase) UpdateUser(id int, request _entities.User) (_entities.User, error) {
-	users, err := uuc.userRepository.UpdateUser(id, request)
-	return users, err
+func (uuc *UserUseCase) UpdateUser(id int, request _entities.User) (_entities.User, int, error) {
+	user, rows, err := uuc.userRepository.GetUserById(id)
+	if err != nil {
+		return user, 0, err
+	}
+	if rows == 0 {
+		return user, 0, nil
+	}
+	if request.Name != "" {
+		user.Name = request.Name
+	}
+	if request.Email != "" {
+		user.Email = request.Email
+	}
+	if request.Password != "" {
+		user.Password = request.Password
+	}
+	if request.PhoneNumber != "" {
+		user.PhoneNumber = request.PhoneNumber
+	}
+
+	users, rows, err := uuc.userRepository.UpdateUser(user)
+	return users, rows, err
 }
 
 func (uuc *UserUseCase) DeleteUser(id int) error {
@@ -43,7 +63,7 @@ func (uuc *UserUseCase) DeleteUser(id int) error {
 	return err
 }
 
-func (uuc *UserUseCase) GetUserById(id int) (_entities.User, error) {
-	users, err := uuc.userRepository.GetUserById(id)
-	return users, err
+func (uuc *UserUseCase) GetUserById(id int) (_entities.User, int, error) {
+	users, rows, err := uuc.userRepository.GetUserById(id)
+	return users, rows, err
 }

@@ -61,11 +61,22 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		users, err := uh.userUseCase.UpdateUser(id, param)
+		users, rows, err := uh.userUseCase.UpdateUser(id, param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data", users))
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
+
+		responseUser := map[string]interface{}{
+			"ID":           users.ID,
+			"name":         users.Name,
+			"email":        users.Email,
+			"phone_number": users.PhoneNumber,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data", responseUser))
 	}
 }
 
@@ -110,9 +121,12 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
 
-		user, err := uh.userUseCase.GetUserById(id)
+		user, rows, err := uh.userUseCase.GetUserById(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
 
 		responseUser := map[string]interface{}{

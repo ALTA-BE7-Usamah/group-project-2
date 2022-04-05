@@ -5,8 +5,8 @@ import (
 )
 
 type UserRepositoryInterface interface {
-	GetUserById(id int) (_entities.User, error)
+	GetUserById(id int) (_entities.User, int, error)
 	CreateUser(request _entities.User) (_entities.User, error)
-	UpdateUser(id int, request _entities.User) (_entities.User, error)
+	UpdateUser(request _entities.User) (_entities.User, int, error)
 	DeleteUser(id int) error
 }
