@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	_entities "group-project/limamart/entities"
 	_userRepository "group-project/limamart/repository/users"
 )
@@ -17,6 +18,18 @@ func NewUserUseCase(userRepo _userRepository.UserRepositoryInterface) UserUseCas
 
 func (uuc *UserUseCase) CreateUser(request _entities.User) (_entities.User, error) {
 	users, err := uuc.userRepository.CreateUser(request)
+	if request.Name == "" {
+		return users, errors.New("can't be empty")
+	}
+	if request.Email == "" {
+		return users, errors.New("can't be empty")
+	}
+	if request.Password == "" {
+		return users, errors.New("can't be empty")
+	}
+	if request.PhoneNumber == "" {
+		return users, errors.New("can't be empty")
+	}
 	return users, err
 }
 
