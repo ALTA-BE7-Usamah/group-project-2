@@ -2,6 +2,7 @@ package routes
 
 import (
 	_authHandler "group-project/limamart/delivery/handler/auth"
+	_cartHandler "group-project/limamart/delivery/handler/cart"
 	_productHandler "group-project/limamart/delivery/handler/product"
 	_userHandler "group-project/limamart/delivery/handler/users"
 	_middlewares "group-project/limamart/delivery/middlewares"
@@ -27,4 +28,11 @@ func RegisterProductPath(e *echo.Echo, uh _productHandler.ProductHandler) {
 	e.POST("/products", uh.CreateProductHandler(), _middlewares.JWTMiddleware())
 	e.PUT("/products/:id", uh.UpdateProductHandler(), _middlewares.JWTMiddleware())
 	e.DELETE("/products/:id", uh.DeleteProductHandler(), _middlewares.JWTMiddleware())
+}
+
+func RegisterCartPath(e *echo.Echo, uh _cartHandler.CartHandler) {
+	e.GET("/cart", uh.GetAllHandler(), _middlewares.JWTMiddleware())
+	e.POST("/cart", uh.CreateCartHandler(), _middlewares.JWTMiddleware())
+	e.PUT("/cart/:id", uh.UpdateCartHandler(), _middlewares.JWTMiddleware())
+	e.DELETE("/cart/:id", uh.DeleteCartHandler(), _middlewares.JWTMiddleware())
 }

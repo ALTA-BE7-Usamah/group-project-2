@@ -1,60 +1,67 @@
-package product
+package cart
 
 import (
 	"fmt"
 	"group-project/limamart/delivery/helper"
-	_middlewares "group-project/limamart/delivery/middlewares"
-	_productUseCase "group-project/limamart/usecase/product"
+	_cartUseCase "group-project/limamart/usecase/cart"
 	"net/http"
 	"strconv"
 
+	_middlewares "group-project/limamart/delivery/middlewares"
 	_entities "group-project/limamart/entities"
 
 	"github.com/labstack/echo/v4"
 )
 
-type ProductHandler struct {
-	productUseCase _productUseCase.ProductUseCaseInterface
+type CartHandler struct {
+	cartUseCase _cartUseCase.CartUseCaseInterface
 }
 
-func NewProductHandler(u _productUseCase.ProductUseCaseInterface) ProductHandler {
-	return ProductHandler{
-		productUseCase: u,
+func NewCartHandler(u _cartUseCase.CartUseCaseInterface) CartHandler {
+	return CartHandler{
+		cartUseCase: u,
 	}
 }
 
-func (uh *ProductHandler) GetAllHandler() echo.HandlerFunc {
+func (uh *CartHandler) GetAllHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		products, err := uh.productUseCase.GetAll()
+		idToken, errToken := _middlewares.ExtractToken(c)
+		if errToken != nil {
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
+		}
+		fmt.Println("id token", idToken)
+		
+		carts, err := uh.cartUseCase.GetAll(idToken)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all products", products))
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all carts", carts))
 	}
 }
 
-func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
+func (uh *CartHandler) CreateCartHandler() echo.HandlerFunc {
+	
 	return func(c echo.Context) error {
-		var param _entities.Product
+		var param _entities.Cart
 
 	err := c.Bind(&param)
 	idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-	param.UserID = uint(idToken)
+		param.UserID = uint(idToken)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 	}
-		products, err := uh.productUseCase.CreateProduct(param)
+		carts, err := uh.cartUseCase.CreateCart(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create product", products))
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create cart", carts))
 	}
 }
 
-func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
+func (uh *CartHandler) UpdateCartHandler() echo.HandlerFunc {
 	
 	return func(c echo.Context) error {
 		idToken, errToken := _middlewares.ExtractToken(c)
@@ -62,10 +69,10 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		fmt.Println("id token", idToken)
-		var param _entities.Product
+		var param _entities.Cart
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.productUseCase.GetProductById(id)
+		getid, err := uh.cartUseCase.GetCartById(id)
 		
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -84,15 +91,15 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 	}
-		products, err := uh.productUseCase.UpdateProduct(id, param)
+		carts, err := uh.cartUseCase.UpdateCart(id, param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data product", products))
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update cart", carts))
 	}
 }
 
-func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
+func (uh *CartHandler) DeleteCartHandler() echo.HandlerFunc {
 	
 	return func(c echo.Context) error {
 
@@ -104,7 +111,7 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 		
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.productUseCase.GetProductById(id)
+		getid, err := uh.cartUseCase.GetCartById(id)
 		
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -116,29 +123,10 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		
-		err = uh.productUseCase.DeleteProduct(id)
+		err = uh.cartUseCase.DeleteCart(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success delete product", err))
-	}
-}
-
-func (uh *ProductHandler) GetProductByIdHandler() echo.HandlerFunc {
-	
-	return func(c echo.Context) error {
-		id, err := strconv.Atoi(c.Param("id"))
-
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
-		}
-		
-		product, err := uh.productUseCase.GetProductById(id)
-		
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-		}
-		
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get product by id", product))
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success delete cart", err))
 	}
 }
