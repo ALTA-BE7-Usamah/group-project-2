@@ -49,14 +49,13 @@ func (ur *CartRepository) CreateCart(request _entities.Cart) (_entities.Cart, er
 	return request, nil
 }
 
-func (ur *CartRepository) UpdateCart(id int, request _entities.Cart) (_entities.Cart, error) {
-	err := ur.DB.Where("id = ?", id).Updates(&request).Error
-	// err := ur.DB.Model(&_entities.Cart{}).Where("id = ?", id).Updates(&request).Error
-	if err != nil {
-		return request, err
+func (ur *CartRepository) UpdateCart(request _entities.Cart) (_entities.Cart, int, error) {
+	tx := ur.DB.Save(&request)
+	if tx.Error != nil {
+		return request, 0, tx.Error
 	}
 
-	return request, nil
+	return request, int(tx.RowsAffected), nil
 }
 
 func (ur *CartRepository) DeleteCart(id int) error {

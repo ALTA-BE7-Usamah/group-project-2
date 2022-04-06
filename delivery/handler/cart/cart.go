@@ -71,31 +71,24 @@ func (uh *CartHandler) UpdateCartHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
+
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
+		}
+
 		var param _entities.Cart
-		id, _ := strconv.Atoi(c.Param("id"))
+		err = c.Bind(&param)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("failed to bind data. please check your data"))
+		}
 
-		getid, rows, err := uh.cartUseCase.GetCartById(id)
-
+		carts, rows, err := uh.cartUseCase.UpdateCart(id, uint(idToken), param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
-		}
-
-		if uint(idToken) != getid.UserID {
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized2"))
-		}
-
-		err = c.Bind(&param)
-
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-		}
-		carts, err := uh.cartUseCase.UpdateCart(id, param)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update cart", carts))
 	}
