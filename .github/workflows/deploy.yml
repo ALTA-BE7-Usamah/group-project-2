@@ -1,0 +1,24 @@
+name: Deploy to EC2
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing deploy to server using remote ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/group-project-2
+            git pull origin main
+            docker stop groupcontainer
+            docker rm groupcontainer
+            docker build -t groupimage:latest .
+            docker run -d -p 8080:8080 -e APP_PORT="8080" -e DB_PORT="3306" -e DB_DRIVER="mysql" -e DB_NAME="group2" -e DB_ADDRESS="aws-gorm-echo.c7opp0pd490o.ap-southeast-1.rds.amazonaws.com" -e DB_USERNAME="admin" -e DB_PASSWORD="qwerty123" --name groupcontainer groupimage:latest
