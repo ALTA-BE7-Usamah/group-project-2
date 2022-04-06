@@ -24,6 +24,10 @@ import (
 	_cartRepository "group-project/limamart/repository/cart"
 	_cartUseCase "group-project/limamart/usecase/cart"
 
+	_catagoryHandler "group-project/limamart/delivery/handler/catagory"
+	_catagoryRepository "group-project/limamart/repository/catagory"
+	_catagoryUseCase "group-project/limamart/usecase/catagory"
+
 	_middlewares "group-project/limamart/delivery/middlewares"
 	_routes "group-project/limamart/delivery/routes"
 	_utils "group-project/limamart/utils"
@@ -49,15 +53,20 @@ func main() {
 	cartUseCase := _cartUseCase.NewCartUseCase(cartRepo, productRepo)
 	cartHandler := _cartHandler.NewCartHandler(cartUseCase)
 
+	catagoryRepo := _catagoryRepository.NewCatagoryRepository(db)
+	catagoryUseCase := _catagoryUseCase.NewCatagoryUseCase(catagoryRepo)
+	catagoryHandler := _catagoryHandler.NewCatagoryHandler(catagoryUseCase)
+
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(_middlewares.CustomLogger())
-	e.Use(middleware.CORS())
 
 	_routes.RegisterAuthPath(e, authHandler)
 	_routes.RegisterUserPath(e, userHandler)
 	_routes.RegisterProductPath(e, productHandler)
 	_routes.RegisterCartPath(e, cartHandler)
+	_routes.RegisterCatagoryPath(e, catagoryHandler)
 
 	log.Fatal(e.Start(fmt.Sprintf(":%v", config.Port)))
 }
