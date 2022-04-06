@@ -10,4 +10,5 @@ type Product struct {
 	Price        uint   `gorm:"not null" json:"price" form:"price"`
 	Stock        uint   `gorm:"not null" json:"stock" form:"stock"`
 	UrlProduct   string `gorm:"not null" json:"url_product" form:"url_product"`
+	Cart         []Cart `gorm:"foreignKey:ProductID;references:ID"`
 }
