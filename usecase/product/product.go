@@ -35,9 +35,7 @@ func (uuc *ProductUseCase) DeleteProduct(id int) error {
 	return err
 }
 
-
-
-func (uuc *ProductUseCase) GetProductById(id int) (_entities.Product, error) {
-	books, err := uuc.productRepository.GetProductById(id)
-	return books, err
+func (uuc *ProductUseCase) GetProductById(id int) (_entities.Product, int, error) {
+	product, rows, err := uuc.productRepository.GetProductById(id)
+	return product, rows, err
 }

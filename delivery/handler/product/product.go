@@ -34,14 +34,14 @@ func (uh *ProductHandler) GetAllHandler() echo.HandlerFunc {
 }
 
 func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 		var param _entities.Product
 
-	err := c.Bind(&param)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-	}
+		err := c.Bind(&param)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
 		products, err := uh.productUseCase.CreateProduct(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -51,7 +51,7 @@ func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
 }
 
 func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 		idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
@@ -61,25 +61,23 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 		var param _entities.Product
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.productUseCase.GetProductById(id)
-		
+		getid, rows, err := uh.productUseCase.GetProductById(id)
+
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-
-
-		fmt.Println("id param user id", getid.UserID)
-
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
 		if uint(idToken) != getid.UserID {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized2"))
 		}
 
-		
 		err = c.Bind(&param)
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-	}
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
 		products, err := uh.productUseCase.UpdateProduct(id, param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -89,7 +87,7 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 }
 
 func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 
 		idToken, errToken := _middlewares.ExtractToken(c)
@@ -97,21 +95,20 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		fmt.Println("id token", idToken)
-		
+
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.productUseCase.GetProductById(id)
-		
+		getid, rows, err := uh.productUseCase.GetProductById(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-
-		fmt.Println("id param user id", getid.UserID)
-
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
 		if uint(idToken) != getid.UserID {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		
+
 		err = uh.productUseCase.DeleteProduct(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
@@ -121,20 +118,20 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 }
 
 func (uh *ProductHandler) GetProductByIdHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 		id, err := strconv.Atoi(c.Param("id"))
-
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
-		
-		product, err := uh.productUseCase.GetProductById(id)
-		
+
+		product, rows, err := uh.productUseCase.GetProductById(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get product by id", product))
 	}
 }
