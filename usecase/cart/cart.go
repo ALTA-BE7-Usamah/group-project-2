@@ -30,7 +30,11 @@ func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, error) {
 }
 
 func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, error) {
-	products, err := uuc.productRepository.GetProductById(int(request.ProductID))
+	products, rows, err := uuc.productRepository.GetProductById(int(request.ProductID))
+
+	if rows == 0 {
+		return _entities.Cart{}, nil
+	}
 
 	if request.Quantity > products.Stock {
 		return _entities.Cart{}, errors.New("this product is out of stock")
@@ -44,7 +48,11 @@ func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, erro
 
 func (uuc *CartUseCase) UpdateCart(id int, request _entities.Cart) (_entities.Cart, error) {
 	cart, err := uuc.cartRepository.GetCartById(id)
-	products, err := uuc.productRepository.GetProductById(int(cart.ProductID))
+	products, rows, err := uuc.productRepository.GetProductById(int(cart.ProductID))
+
+	if rows == 0 {
+		return _entities.Cart{}, nil
+	}
 	
 	if request.Quantity > products.Stock {
 		return _entities.Cart{}, errors.New("this product is out of stock")
