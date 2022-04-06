@@ -41,9 +41,34 @@ func (uuc *ProductUseCase) CreateProduct(request _entities.Product) (_entities.P
 	return product, err
 }
 
-func (uuc *ProductUseCase) UpdateProduct(id int, request _entities.Product) (_entities.Product, error) {
-	books, err := uuc.productRepository.UpdateProduct(id, request)
-	return books, err
+func (uuc *ProductUseCase) UpdateProduct(request _entities.Product, id uint, idToken uint) (_entities.Product, int, error) {
+	productFind, rows, err := uuc.productRepository.GetProductById(int(id))
+	if err != nil {
+		return productFind, 0, err
+	}
+	if rows == 0 {
+		return productFind, 0, nil
+	}
+	if productFind.UserID != idToken {
+		return productFind, 1, errors.New("unauthorized")
+	}
+	if request.CatagoryID != 0 {
+		productFind.CatagoryID = request.CatagoryID
+	}
+	if request.ProductTitle != "" {
+		productFind.ProductTitle = request.ProductTitle
+	}
+	if request.Price != 0 {
+		productFind.Price = request.Price
+	}
+	if request.Stock != 0 {
+		productFind.Stock = request.Stock
+	}
+	if request.UrlProduct != "" {
+		productFind.UrlProduct = request.UrlProduct
+	}
+	product, rows, err := uuc.productRepository.UpdateProduct(productFind)
+	return product, rows, err
 }
 
 func (uuc *ProductUseCase) DeleteProduct(id int) error {

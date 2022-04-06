@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"group-project/limamart/delivery/helper"
 	_middlewares "group-project/limamart/delivery/middlewares"
+	"group-project/limamart/entities"
 	_productUseCase "group-project/limamart/usecase/product"
 	"net/http"
 	"strconv"
@@ -61,36 +62,33 @@ func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
 func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
+
+		//mendapatkan id dari token yang dimasukkan
 		idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
-		var param _entities.Product
-		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, rows, err := uh.productUseCase.GetProductById(id)
-
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
+		}
+
+		var updateProduct entities.Product
+		errBind := c.Bind(&updateProduct)
+		if errBind != nil {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("failed to bind data. please check your data"))
+		}
+
+		product, rows, err := uh.productUseCase.UpdateProduct(updateProduct, uint(id), uint(idToken))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		if uint(idToken) != getid.UserID {
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized2"))
-		}
-
-		err = c.Bind(&param)
-
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-		}
-		products, err := uh.productUseCase.UpdateProduct(id, param)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data product", products))
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data product", product))
 	}
 }
 
