@@ -47,20 +47,20 @@ func (uh *CartHandler) CreateCartHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var param _entities.Cart
 
-		err := c.Bind(&param)
+		errBind := c.Bind(&param)
 		idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		param.UserID = uint(idToken)
+		if errBind != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(errBind.Error()))
+		}
+		_, err := uh.cartUseCase.CreateCart(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		carts, err := uh.cartUseCase.CreateCart(param)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create cart", carts))
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success create cart"))
 	}
 }
 
@@ -75,13 +75,14 @@ func (uh *CartHandler) UpdateCartHandler() echo.HandlerFunc {
 		var param _entities.Cart
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.cartUseCase.GetCartById(id)
+		getid, rows, err := uh.cartUseCase.GetCartById(id)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-
-		fmt.Println("id param user id", getid.UserID)
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
 
 		if uint(idToken) != getid.UserID {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized2"))
@@ -112,13 +113,14 @@ func (uh *CartHandler) DeleteCartHandler() echo.HandlerFunc {
 
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		getid, err := uh.cartUseCase.GetCartById(id)
+		getid, rows, err := uh.cartUseCase.GetCartById(id)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-
-		fmt.Println("id param user id", getid.UserID)
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
 
 		if uint(idToken) != getid.UserID {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))

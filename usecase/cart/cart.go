@@ -24,17 +24,23 @@ func (uuc *CartUseCase) GetAll(idToken int) ([]_entities.Cart, int, error) {
 	return carts, rows, err
 }
 
-func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, error) {
-	carts, err := uuc.cartRepository.GetCartById(id)
-	return carts, err
+func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, int, error) {
+	carts, rows, err := uuc.cartRepository.GetCartById(id)
+	return carts, rows, err
 }
 
 func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, error) {
-	products, rows, err := uuc.productRepository.GetProductById(int(request.ProductID))
-	if rows == 0 {
-		return request, err
+	if request.ProductID == 0 {
+		return request, errors.New("can't be empty")
+	}
+	if request.Qty == 0 {
+		return request, errors.New("can't be empty")
 	}
 
+	products, rows, err := uuc.productRepository.GetProductById(int(request.ProductID))
+	if rows == 0 {
+		return request, errors.New("failed product by id")
+	}
 	if request.Qty > products.Stock {
 		return _entities.Cart{}, errors.New("this product is out of stock")
 	}
@@ -46,7 +52,7 @@ func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, erro
 }
 
 func (uuc *CartUseCase) UpdateCart(id int, request _entities.Cart) (_entities.Cart, error) {
-	cart, err := uuc.cartRepository.GetCartById(id)
+	cart, rows, err := uuc.cartRepository.GetCartById(id)
 	products, rows, err := uuc.productRepository.GetProductById(int(cart.ProductID))
 	if rows == 0 {
 		return cart, err
