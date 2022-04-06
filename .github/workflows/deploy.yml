@@ -21,4 +21,4 @@ jobs:
             docker stop groupcontainer
             docker rm groupcontainer
             docker build -t groupimage:latest .
-            docker run -d -p 8080:8080 -e APP_PORT="8080" -e DB_PORT="3306" -e DB_DRIVER="mysql" -e DB_NAME="group2" -e DB_ADDRESS="aws-gorm-echo.c7opp0pd490o.ap-southeast-1.rds.amazonaws.com" -e DB_USERNAME="admin" -e DB_PASSWORD="qwerty123" --name groupcontainer groupimage:latest
+            docker run -d -p 50:8080 -e APP_PORT="8080" -e DB_PORT="3306" -e DB_DRIVER="mysql" -e DB_NAME="group2" -e DB_ADDRESS="aws-gorm-echo.c7opp0pd490o.ap-southeast-1.rds.amazonaws.com" -e DB_USERNAME="admin" -e DB_PASSWORD="qwerty123" --name groupcontainer groupimage:latest
