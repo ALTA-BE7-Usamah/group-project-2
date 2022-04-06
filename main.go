@@ -52,6 +52,7 @@ func main() {
 	e := echo.New()
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(_middlewares.CustomLogger())
+	e.Use(middleware.CORS())
 
 	_routes.RegisterAuthPath(e, authHandler)
 	_routes.RegisterUserPath(e, userHandler)
