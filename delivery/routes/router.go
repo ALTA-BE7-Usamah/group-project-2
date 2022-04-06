@@ -8,10 +8,12 @@ import (
 	_middlewares "group-project/limamart/delivery/middlewares"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func RegisterAuthPath(e *echo.Echo, ah *_authHandler.AuthHandler) {
 	e.POST("/auth", ah.LoginHandler())
+	e.Use(middleware.CORS())
 }
 
 func RegisterUserPath(e *echo.Echo, uh _userHandler.UserHandler) {
@@ -19,6 +21,7 @@ func RegisterUserPath(e *echo.Echo, uh _userHandler.UserHandler) {
 	e.POST("/users", uh.CreateUserHandler())
 	e.PUT("/users/:id", uh.UpdateUserHandler(), _middlewares.JWTMiddleware())
 	e.DELETE("/users/:id", uh.DeleteUserHandler(), _middlewares.JWTMiddleware())
+	e.Use(middleware.CORS())
 }
 
 func RegisterProductPath(e *echo.Echo, uh _productHandler.ProductHandler) {
@@ -28,6 +31,7 @@ func RegisterProductPath(e *echo.Echo, uh _productHandler.ProductHandler) {
 	e.POST("/products", uh.CreateProductHandler(), _middlewares.JWTMiddleware())
 	e.PUT("/products/:id", uh.UpdateProductHandler(), _middlewares.JWTMiddleware())
 	e.DELETE("/products/:id", uh.DeleteProductHandler(), _middlewares.JWTMiddleware())
+	e.Use(middleware.CORS())
 }
 
 func RegisterCartPath(e *echo.Echo, uh _cartHandler.CartHandler) {
@@ -35,4 +39,5 @@ func RegisterCartPath(e *echo.Echo, uh _cartHandler.CartHandler) {
 	e.POST("/cart", uh.CreateCartHandler(), _middlewares.JWTMiddleware())
 	e.PUT("/cart/:id", uh.UpdateCartHandler(), _middlewares.JWTMiddleware())
 	e.DELETE("/cart/:id", uh.DeleteCartHandler(), _middlewares.JWTMiddleware())
+	e.Use(middleware.CORS())
 }
