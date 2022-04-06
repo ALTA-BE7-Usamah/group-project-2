@@ -54,7 +54,6 @@ func (ur *CartRepository) UpdateCart(request _entities.Cart) (_entities.Cart, in
 	if tx.Error != nil {
 		return request, 0, tx.Error
 	}
-
 	return request, int(tx.RowsAffected), nil
 }
 
