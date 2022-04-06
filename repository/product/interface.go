@@ -10,4 +10,5 @@ type ProductRepositoryInterface interface {
 	UpdateProduct(request _entities.Product) (_entities.Product, int, error)
 	DeleteProduct(id int) error
 	GetProductById(id int) (_entities.Product, int, error)
+	GetAllProductUser(userID uint) ([]_entities.Product, error)
 }

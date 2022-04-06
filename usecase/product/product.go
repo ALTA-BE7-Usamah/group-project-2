@@ -80,3 +80,8 @@ func (uuc *ProductUseCase) GetProductById(id int) (_entities.Product, int, error
 	product, rows, err := uuc.productRepository.GetProductById(id)
 	return product, rows, err
 }
+
+func (uuc *ProductUseCase) GetAllProductUser(userID uint) ([]_entities.Product, error) {
+	products, err := uuc.productRepository.GetAllProductUser(userID)
+	return products, err
+}

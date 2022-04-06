@@ -59,6 +59,14 @@ func (ur *ProductRepository) DeleteProduct(id int) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
+}
+
+func (ur *ProductRepository) GetAllProductUser(userID uint) ([]_entities.Product, error) {
+	var products []_entities.Product
+	tx := ur.DB.Where("user_id = ?", userID).Find(&products)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return products, nil
 }

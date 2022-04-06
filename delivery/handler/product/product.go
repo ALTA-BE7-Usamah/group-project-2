@@ -141,3 +141,19 @@ func (uh *ProductHandler) GetProductByIdHandler() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get product by id", product))
 	}
 }
+
+func (uh *ProductHandler) GetAllProductUserHandler() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		idToken, errToken := _middlewares.ExtractToken(c)
+		if errToken != nil {
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
+		}
+
+		products, err := uh.productUseCase.GetAllProductUser(uint(idToken))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
+		}
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all tasks", products))
+	}
+}
