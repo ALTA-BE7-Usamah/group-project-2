@@ -11,4 +11,5 @@ type User struct {
 	Product     []Product `gorm:"foreignKey:UserID;references:ID"`
 	Cart        []Cart    `gorm:"foreignKey:UserID;references:ID"`
 	Address     []Address `gorm:"foreignKey:UserID;references:ID"`
+	Order       []Order   `gorm:"foreignKey:UserID;references:ID"`
 }
