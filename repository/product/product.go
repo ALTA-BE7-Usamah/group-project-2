@@ -42,7 +42,6 @@ func (ur *ProductRepository) CreateProduct(request _entities.Product) (_entities
 	if yx.Error != nil {
 		return request, yx.Error
 	}
-
 	return request, nil
 }
 

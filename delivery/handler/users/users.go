@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"group-project/limamart/delivery/helper"
 	_middlewares "group-project/limamart/delivery/middlewares"
 	_userUseCase "group-project/limamart/usecase/users"
@@ -48,7 +47,6 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		var param _entities.User
 		id, _ := strconv.Atoi(c.Param("id"))

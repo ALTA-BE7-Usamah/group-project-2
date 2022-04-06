@@ -36,12 +36,20 @@ func (uh *ProductHandler) GetAllHandler() echo.HandlerFunc {
 func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
+
+		idToken, errToken := _middlewares.ExtractToken(c)
+		if errToken != nil {
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
+		}
+
 		var param _entities.Product
 
 		err := c.Bind(&param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
+		param.UserID = uint(idToken)
+
 		products, err := uh.productUseCase.CreateProduct(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
