@@ -22,9 +22,11 @@ func NewUserHandler(u _userUseCase.UserUseCaseInterface) UserHandler {
 	}
 }
 
+
 func (uh *UserHandler) CreateUserHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
+		
 		var param _entities.User
 
 		errBind := c.Bind(&param)
