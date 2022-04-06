@@ -19,9 +19,9 @@ func NewCartUseCase(cartRepo _cartRepository.CartRepositoryInterface, productRep
 	}
 }
 
-func (uuc *CartUseCase) GetAll(id int) ([]_entities.Cart, error) {
-	carts, err := uuc.cartRepository.GetAll(id)
-	return carts, err
+func (uuc *CartUseCase) GetAll(idToken int) ([]_entities.Cart, int, error) {
+	carts, rows, err := uuc.cartRepository.GetAll(idToken)
+	return carts, rows, err
 }
 
 func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, error) {
