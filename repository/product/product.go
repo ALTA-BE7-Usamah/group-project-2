@@ -25,41 +25,48 @@ func (ur *ProductRepository) GetAll() ([]_entities.Product, error) {
 	return products, nil
 }
 
-func (ur *ProductRepository) GetProductById(id int) (_entities.Product, error) {
+func (ur *ProductRepository) GetProductById(id int) (_entities.Product, int, error) {
 	var products _entities.Product
 	tx := ur.DB.Find(&products, id)
 	if tx.Error != nil {
-		return products, tx.Error
+		return products, 0, tx.Error
 	}
-
-	return products, nil
+	if tx.RowsAffected == 0 {
+		return products, 0, nil
+	}
+	return products, int(tx.RowsAffected), nil
 }
 
 func (ur *ProductRepository) CreateProduct(request _entities.Product) (_entities.Product, error) {
 	yx := ur.DB.Save(&request)
 	if yx.Error != nil {
-		return request , yx.Error
+		return request, yx.Error
 	}
-
 	return request, nil
 }
 
-func (ur *ProductRepository) UpdateProduct(id int, request _entities.Product) (_entities.Product, error) {
-	err := ur.DB.Model(&_entities.Product{}).Where("id = ?", id).Updates(request).Error
-	if err != nil {
-		return request , err
+func (ur *ProductRepository) UpdateProduct(request _entities.Product) (_entities.Product, int, error) {
+	tx := ur.DB.Save(&request)
+	if tx.Error != nil {
+		return request, 0, tx.Error
 	}
-
-	return request, nil
+	return request, int(tx.RowsAffected), nil
 }
 
 func (ur *ProductRepository) DeleteProduct(id int) error {
-	
+
 	err := ur.DB.Unscoped().Delete(&_entities.Product{}, id).Error
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
+func (ur *ProductRepository) GetAllProductUser(userID uint) ([]_entities.Product, error) {
+	var products []_entities.Product
+	tx := ur.DB.Where("user_id = ?", userID).Find(&products)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return products, nil
+}

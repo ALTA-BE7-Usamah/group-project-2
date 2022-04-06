@@ -15,7 +15,6 @@ func RegisterAuthPath(e *echo.Echo, ah *_authHandler.AuthHandler) {
 }
 
 func RegisterUserPath(e *echo.Echo, uh _userHandler.UserHandler) {
-	e.GET("/users", uh.GetAllHandler(), _middlewares.JWTMiddleware())
 	e.GET("/users/:id", uh.GetUserByIdHandler(), _middlewares.JWTMiddleware())
 	e.POST("/users", uh.CreateUserHandler())
 	e.PUT("/users/:id", uh.UpdateUserHandler(), _middlewares.JWTMiddleware())
@@ -25,6 +24,7 @@ func RegisterUserPath(e *echo.Echo, uh _userHandler.UserHandler) {
 func RegisterProductPath(e *echo.Echo, uh _productHandler.ProductHandler) {
 	e.GET("/products", uh.GetAllHandler())
 	e.GET("/products/:id", uh.GetProductByIdHandler())
+	e.GET("products/users", uh.GetAllProductUserHandler(), _middlewares.JWTMiddleware())
 	e.POST("/products", uh.CreateProductHandler(), _middlewares.JWTMiddleware())
 	e.PUT("/products/:id", uh.UpdateProductHandler(), _middlewares.JWTMiddleware())
 	e.DELETE("/products/:id", uh.DeleteProductHandler(), _middlewares.JWTMiddleware())
