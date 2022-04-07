@@ -33,8 +33,6 @@ import (
 	_orderRepository "group-project/limamart/repository/order"
 	_orderUseCase "group-project/limamart/usecase/order"
 
-	_middlewares "group-project/limamart/delivery/middlewares"
-
 	_routes "group-project/limamart/delivery/routes"
 	_utils "group-project/limamart/utils"
 )
