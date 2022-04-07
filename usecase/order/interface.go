@@ -5,6 +5,6 @@ import (
 )
 
 type OrderUseCaseInterface interface {
-	GetAll(id int) ([]_entities.Order, error)
+	GetAllOrder(idToken int) ([]_entities.OrdersDetail, int, error)
 	CreateOrder(request _entities.Order, orderCartID []uint, idToken uint) (_entities.Order, int, error)
 }

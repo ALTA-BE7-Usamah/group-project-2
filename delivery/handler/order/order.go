@@ -1,7 +1,6 @@
 package order
 
 import (
-	"fmt"
 	"group-project/limamart/delivery/helper"
 	_orderUseCase "group-project/limamart/usecase/order"
 	"net/http"
@@ -22,17 +21,19 @@ func NewOrderHandler(u _orderUseCase.OrderUseCaseInterface) OrderHandler {
 	}
 }
 
-func (uh *OrderHandler) GetAllHandler() echo.HandlerFunc {
+func (uh *OrderHandler) GetAllOrdersHandler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
-		orders, err := uh.orderUseCase.GetAll(idToken)
+		orders, rows, err := uh.orderUseCase.GetAllOrder(idToken)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
+		}
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all orders", orders))
 	}

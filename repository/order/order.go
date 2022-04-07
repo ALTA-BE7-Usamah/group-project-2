@@ -17,13 +17,13 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 
 }
 
-func (ur *OrderRepository) GetAll(id int) ([]_entities.Order, error) {
-	var orders []_entities.Order
-	tx := ur.DB.Where("user_id = ?", id).Find(&orders)
+func (ur *OrderRepository) GetAllOrder(idToken int) ([]_entities.OrdersDetail, int, error) {
+	var orders []_entities.OrdersDetail
+	tx := ur.DB.Preload("Product").Where("user_id = ?", idToken).Find(&orders)
 	if tx.Error != nil {
-		return nil, tx.Error
+		return orders, 0, tx.Error
 	}
-	return orders, nil
+	return orders, int(tx.RowsAffected), nil
 }
 
 func (ur *OrderRepository) CreateOrder(creatOrder _entities.Order, orderCartID []uint) (_entities.Order, int, error) {
@@ -39,12 +39,26 @@ func (ur *OrderRepository) CreateOrder(creatOrder _entities.Order, orderCartID [
 			return creatOrder, 0, tx.Error
 		}
 		ordersDetail.UserID = creatOrder.UserID
-		ordersDetail.OrderID = creatOrder.ID
 		ordersDetail.ProductID = carts.ProductID
 		ordersDetail.TotalPrice = carts.SubTotal
 		yx := ur.DB.Save(&ordersDetail)
 		if yx.Error != nil {
 			return creatOrder, 0, yx.Error
+		}
+		var products _entities.Product
+		zx := ur.DB.Find(&products, carts.ProductID)
+		if zx.Error != nil {
+			return creatOrder, 0, zx.Error
+		}
+		products.Stock -= carts.Qty
+		ux := ur.DB.Save(&products)
+		if ux.Error != nil {
+			return creatOrder, 0, ux.Error
+		}
+
+		err := ur.DB.Unscoped().Delete(&_entities.Cart{}, orderCartID[i]).Error
+		if err != nil {
+			return creatOrder, 0, err
 		}
 	}
 	zx := ur.DB.Save(&creatOrder.Address)
@@ -56,4 +70,12 @@ func (ur *OrderRepository) CreateOrder(creatOrder _entities.Order, orderCartID [
 		return creatOrder, 0, xx.Error
 	}
 	return creatOrder, int(yx.RowsAffected), nil
+}
+
+func (ur *OrderRepository) CancelOrder(cancelOrder _entities.OrdersDetail) (_entities.OrdersDetail, int, error) {
+	tx := ur.DB.Save(&cancelOrder)
+	if tx.Error != nil {
+		return cancelOrder, 0, tx.Error
+	}
+	return cancelOrder, int(tx.RowsAffected), nil
 }
