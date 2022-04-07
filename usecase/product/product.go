@@ -29,6 +29,9 @@ func (uuc *ProductUseCase) CreateProduct(request _entities.Product) (_entities.P
 	if request.ProductTitle == "" {
 		return product, errors.New("can't be empty")
 	}
+	if request.ProductDesc == "" {
+		return product, errors.New("can't be empty")
+	}
 	if request.Price == 0 {
 		return product, errors.New("can't be empty")
 	}
@@ -57,6 +60,9 @@ func (uuc *ProductUseCase) UpdateProduct(request _entities.Product, id uint, idT
 	}
 	if request.ProductTitle != "" {
 		productFind.ProductTitle = request.ProductTitle
+	}
+	if request.ProductDesc != "" {
+		productFind.ProductDesc = request.ProductDesc
 	}
 	if request.Price != 0 {
 		productFind.Price = request.Price
