@@ -28,7 +28,7 @@ func (ur *UserRepository) CreateUser(request _entities.User) (_entities.User, er
 
 func (ur *UserRepository) GetUserById(idToken int) (_entities.User, int, error) {
 	var users _entities.User
-	tx := ur.DB.Preload("Product").Preload("Cart").Preload("Address").Preload("Order").Where("ID = ?", idToken).Find(&users)
+	tx := ur.DB.Where("ID = ?", idToken).Find(&users)
 	if tx.Error != nil {
 		return users, 0, tx.Error
 	}
