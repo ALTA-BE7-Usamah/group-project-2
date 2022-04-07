@@ -72,6 +72,18 @@ func (ur *OrderRepository) CreateOrder(creatOrder _entities.Order, orderCartID [
 	return creatOrder, int(yx.RowsAffected), nil
 }
 
+func (ur *OrderRepository) GetHistoriOrderbyID(id int) (_entities.OrdersDetail, int, error) {
+	var orderHistory _entities.OrdersDetail
+	tx := ur.DB.Find(&orderHistory, id)
+	if tx.Error != nil {
+		return orderHistory, 0, tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return orderHistory, 0, nil
+	}
+	return orderHistory, int(tx.RowsAffected), nil
+}
+
 func (ur *OrderRepository) CancelOrder(cancelOrder _entities.OrdersDetail) (_entities.OrdersDetail, int, error) {
 	tx := ur.DB.Save(&cancelOrder)
 	if tx.Error != nil {

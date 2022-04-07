@@ -23,8 +23,8 @@ func NewOrderUseCase(orderRepo _orderRepository.OrderRepositoryInterface, cartRe
 }
 
 func (uuc *OrderUseCase) GetAllOrder(idToken int) ([]_entities.OrdersDetail, int, error) {
-	carts, rows, err := uuc.orderRepository.GetAllOrder(idToken)
-	return carts, rows, err
+	order, rows, err := uuc.orderRepository.GetAllOrder(idToken)
+	return order, rows, err
 }
 
 func (uuc *OrderUseCase) CreateOrder(creatOrder _entities.Order, orderCartID []uint, idToken uint) (_entities.Order, int, error) {
@@ -43,4 +43,34 @@ func (uuc *OrderUseCase) CreateOrder(creatOrder _entities.Order, orderCartID []u
 
 	order, rows, err := uuc.orderRepository.CreateOrder(creatOrder, orderCartID)
 	return order, rows, err
+}
+
+func (uuc *OrderUseCase) GetHistoriOrderbyID(id int) (_entities.OrdersDetail, int, error) {
+	order, rows, err := uuc.orderRepository.GetHistoriOrderbyID(id)
+	return order, rows, err
+}
+
+func (uuc *OrderUseCase) CancelOrder(cancelOrder _entities.OrdersDetail, id uint, idToken uint) (_entities.OrdersDetail, int, error) {
+	order, rows, err := uuc.orderRepository.GetHistoriOrderbyID(int(id))
+	if err != nil {
+		return order, 0, err
+	}
+	if rows == 0 {
+		return order, 0, nil
+	}
+	if order.UserID != idToken {
+		return order, 1, errors.New("unauthorized")
+	}
+	if cancelOrder.UserID != 0 {
+		order.UserID = cancelOrder.UserID
+	}
+	if cancelOrder.ProductID != 0 {
+		order.ProductID = cancelOrder.ProductID
+	}
+	if cancelOrder.TotalPrice != 0 {
+		order.TotalPrice = cancelOrder.TotalPrice
+	}
+	order.Status = "canceled"
+	orderUpdate, rowsUpdate, errUpdate := uuc.orderRepository.CancelOrder(order)
+	return orderUpdate, rowsUpdate, errUpdate
 }
