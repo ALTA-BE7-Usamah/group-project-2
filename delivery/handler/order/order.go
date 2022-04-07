@@ -29,7 +29,7 @@ func (uh *OrderHandler) GetAllHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		fmt.Println("id token", idToken)
-		
+
 		orders, err := uh.orderUseCase.GetAll(idToken)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
@@ -39,23 +39,29 @@ func (uh *OrderHandler) GetAllHandler() echo.HandlerFunc {
 }
 
 func (uh *OrderHandler) CreateOrderHandler() echo.HandlerFunc {
-	
+
 	return func(c echo.Context) error {
 		var param _entities.Order
 
-	err := c.Bind(&param)
-	idToken, errToken := _middlewares.ExtractToken(c)
+		err := c.Bind(&param)
+		idToken, errToken := _middlewares.ExtractToken(c)
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 		param.UserID = uint(idToken)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
-	}
-		orders, err := uh.orderUseCase.CreateOrder(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create order", orders))
+		orders, rows, err := uh.orderUseCase.CreateOrder(param, uint(idToken))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		}
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
+		responseOrder := map[string]interface{}{
+			"total_price": orders.TotalPrice,
+		}
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create order", responseOrder))
 	}
 }
