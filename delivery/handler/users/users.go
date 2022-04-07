@@ -102,6 +102,7 @@ func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
 	}
 }
 
+
 func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
@@ -111,16 +112,7 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 
-		id, err := strconv.Atoi(c.Param("id"))
-
-		if idToken != id {
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
-		}
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
-		}
-
-		user, rows, err := uh.userUseCase.GetUserById(id)
+		user, rows, err := uh.userUseCase.GetUserById(idToken)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}

@@ -16,14 +16,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	}
 }
 
-// func HashPassword(password string) (string, error) {
-// 	// Ini gue bikin 32 bytes format, kalau mau ganti angka 32 nya sesuai kebutuhan
-// 	pass, err := bcrypt.GenerateFromPassword([]byte(password), 32)
-// 	return string(pass), err
-// }
-
 func (ur *UserRepository) CreateUser(request _entities.User) (_entities.User, error) {
-	// fmt.Println(HashPassword(request.Password))
 	yx := ur.DB.Save(&request)
 	if yx.Error != nil {
 		return request, yx.Error
@@ -32,9 +25,10 @@ func (ur *UserRepository) CreateUser(request _entities.User) (_entities.User, er
 	return request, nil
 }
 
-func (ur *UserRepository) GetUserById(id int) (_entities.User, int, error) {
+
+func (ur *UserRepository) GetUserById(idToken int) (_entities.User, int, error) {
 	var users _entities.User
-	tx := ur.DB.Find(&users, id)
+	tx := ur.DB.Preload("Product").Preload("Cart").Preload("Address").Preload("Order").Where("ID = ?", idToken).Find(&users)
 	if tx.Error != nil {
 		return users, 0, tx.Error
 	}
