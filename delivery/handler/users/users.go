@@ -73,6 +73,7 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 			"name":         users.Name,
 			"email":        users.Email,
 			"phone_number": users.PhoneNumber,
+			"address": users.Address,
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data", responseUser))
@@ -125,6 +126,7 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 			"name":         user.Name,
 			"email":        user.Email,
 			"phone_number": user.PhoneNumber,
+			"address": user.Address,
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get user by id", responseUser))
