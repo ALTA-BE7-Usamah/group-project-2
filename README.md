@@ -1,9 +1,11 @@
+## About The Project
 This is a Backend Project about Ecommerce App using Golang programming language.
 There's a jwt token for login authentication. and if user already have an account, user can just login with email and password. if not, user should register first.
 
 User can edit or delete their details and create their own product.
 User can buy products and edit the quantity on the cart section.
 In the Order section, user that already have a product list to buy on the shopping cart can just checkout the cart by inputing the shipping address and the credit card details.
+
 
 ### Built With
 * [Gorm](https://gorm.io/)
