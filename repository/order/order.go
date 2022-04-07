@@ -14,7 +14,7 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 	return &OrderRepository{
 		DB: db,
 	}
-	
+
 }
 
 func (ur *OrderRepository) GetAll(id int) ([]_entities.Order, error) {
@@ -26,12 +26,14 @@ func (ur *OrderRepository) GetAll(id int) ([]_entities.Order, error) {
 	return orders, nil
 }
 
-
-func (ur *OrderRepository) CreateOrder(request _entities.Order) (_entities.Order, error) {
+func (ur *OrderRepository) CreateOrder(request _entities.Order, cart []_entities.Cart) (_entities.Order, int, error) {
 	yx := ur.DB.Save(&request)
 	if yx.Error != nil {
-		return request , yx.Error
+		return request, 0, yx.Error
 	}
-
-	return request, nil
+	tx := ur.DB.Save(&cart)
+	if tx.Error != nil {
+		return request, 0, tx.Error
+	}
+	return request, int(tx.RowsAffected), nil
 }

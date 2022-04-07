@@ -1,7 +1,6 @@
 package cart
 
 import (
-	"fmt"
 	"group-project/limamart/delivery/helper"
 	_cartUseCase "group-project/limamart/usecase/cart"
 	"net/http"
@@ -29,7 +28,6 @@ func (uh *CartHandler) GetAllHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		carts, rows, err := uh.cartUseCase.GetAll(idToken)
 		if err != nil {
@@ -102,7 +100,6 @@ func (uh *CartHandler) DeleteCartHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		id, _ := strconv.Atoi(c.Param("id"))
 

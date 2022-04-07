@@ -46,12 +46,6 @@ func (ur *CartRepository) CreateCart(request _entities.Cart) (_entities.Cart, er
 	if yx.Error != nil {
 		return request, yx.Error
 	}
-	var cartOrder _entities.OrdersDetail
-	cartOrder.CartID = &request.ID
-	tx := ur.DB.Save(&cartOrder)
-	if tx.Error != nil {
-		return request, tx.Error
-	}
 	return request, nil
 }
 
