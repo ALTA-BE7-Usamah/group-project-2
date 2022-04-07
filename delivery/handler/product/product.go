@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"group-project/limamart/delivery/helper"
 	_middlewares "group-project/limamart/delivery/middlewares"
-	"group-project/limamart/entities"
 	_productUseCase "group-project/limamart/usecase/product"
 	"net/http"
 	"strconv"
@@ -75,7 +74,7 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
 		}
 
-		var updateProduct entities.Product
+		var updateProduct _entities.Product
 		errBind := c.Bind(&updateProduct)
 		if errBind != nil {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("failed to bind data. please check your data"))
