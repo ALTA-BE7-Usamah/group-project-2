@@ -4,6 +4,7 @@ import (
 	"group-project/limamart/delivery/helper"
 	_orderUseCase "group-project/limamart/usecase/order"
 	"net/http"
+	"strconv"
 
 	_middlewares "group-project/limamart/delivery/middlewares"
 	_entities "group-project/limamart/entities"
@@ -86,5 +87,35 @@ func (uh *OrderHandler) CreateOrderHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
 		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success create order"))
+	}
+}
+
+func (uh *OrderHandler) CancelOrderHandler() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		idToken, errToken := _middlewares.ExtractToken(c)
+		if errToken != nil {
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
+		}
+
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("id not recognise"))
+		}
+
+		var cancelOrder _entities.OrdersDetail
+		errBind := c.Bind(&cancelOrder)
+		if errBind != nil {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("failed to bind data. please check your data"))
+		}
+
+		_, rows, err := uh.orderUseCase.CancelOrder(cancelOrder, uint(id), uint(idToken))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
+		}
+		if rows == 0 {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
+		}
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("successfully cancel order"))
 	}
 }
