@@ -6,5 +6,5 @@ import (
 
 type OrderUseCaseInterface interface {
 	GetAll(id int) ([]_entities.Order, error)
-	CreateOrder(request _entities.Order, idToken uint) (_entities.Order, int, error)
+	CreateOrder(request _entities.Order, orderCartID []uint, idToken uint) (_entities.Order, int, error)
 }

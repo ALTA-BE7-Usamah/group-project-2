@@ -26,14 +26,34 @@ func (ur *OrderRepository) GetAll(id int) ([]_entities.Order, error) {
 	return orders, nil
 }
 
-func (ur *OrderRepository) CreateOrder(request _entities.Order, cart []_entities.Cart) (_entities.Order, int, error) {
-	yx := ur.DB.Save(&request)
+func (ur *OrderRepository) CreateOrder(creatOrder _entities.Order, orderCartID []uint) (_entities.Order, int, error) {
+	yx := ur.DB.Save(&creatOrder)
 	if yx.Error != nil {
-		return request, 0, yx.Error
+		return creatOrder, 0, yx.Error
 	}
-	tx := ur.DB.Save(&cart)
-	if tx.Error != nil {
-		return request, 0, tx.Error
+	for i := 0; i < len(orderCartID); i++ {
+		var ordersDetail _entities.OrdersDetail
+		var carts _entities.Cart
+		tx := ur.DB.Preload("Product").Find(&carts, orderCartID[i])
+		if tx.Error != nil {
+			return creatOrder, 0, tx.Error
+		}
+		ordersDetail.UserID = creatOrder.UserID
+		ordersDetail.OrderID = creatOrder.ID
+		ordersDetail.ProductID = carts.ProductID
+		ordersDetail.TotalPrice = carts.SubTotal
+		yx := ur.DB.Save(&ordersDetail)
+		if yx.Error != nil {
+			return creatOrder, 0, yx.Error
+		}
 	}
-	return request, int(tx.RowsAffected), nil
+	zx := ur.DB.Save(&creatOrder.Address)
+	if zx.Error != nil {
+		return creatOrder, 0, zx.Error
+	}
+	xx := ur.DB.Save(&creatOrder.CreditCard)
+	if xx.Error != nil {
+		return creatOrder, 0, xx.Error
+	}
+	return creatOrder, int(yx.RowsAffected), nil
 }

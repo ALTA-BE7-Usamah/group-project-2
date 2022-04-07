@@ -24,21 +24,20 @@ func (uuc *OrderUseCase) GetAll(id int) ([]_entities.Order, error) {
 	return carts, err
 }
 
-func (uuc *OrderUseCase) CreateOrder(request _entities.Order, idToken uint) (_entities.Order, int, error) {
+func (uuc *OrderUseCase) CreateOrder(creatOrder _entities.Order, orderCartID []uint, idToken uint) (_entities.Order, int, error) {
 	carts, rows, err := uuc.cartRepository.GetAll(int(idToken))
 	if rows == 0 {
-		return request, 0, errors.New("failed get all cart")
+		return creatOrder, 0, errors.New("failed get all cart")
 	}
 	if err != nil {
-		return request, 0, err
+		return creatOrder, 0, err
 	}
 	for i := 0; i < len(carts); i++ {
-		if carts[i].OrderID == nil {
-			carts[i].OrderID = &request.ID
-			request.TotalPrice += carts[i].SubTotal
-		}
+		creatOrder.TotalPrice += carts[i].SubTotal
 	}
 
-	order, rows, err := uuc.orderRepository.CreateOrder(request, carts)
+	creatOrder.StatusOrder = "purchased"
+
+	order, rows, err := uuc.orderRepository.CreateOrder(creatOrder, orderCartID)
 	return order, rows, err
 }
