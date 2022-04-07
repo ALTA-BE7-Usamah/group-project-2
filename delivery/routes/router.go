@@ -4,6 +4,7 @@ import (
 	_authHandler "group-project/limamart/delivery/handler/auth"
 	_cartHandler "group-project/limamart/delivery/handler/cart"
 	_catagoryHandler "group-project/limamart/delivery/handler/catagory"
+	_orderHandler "group-project/limamart/delivery/handler/order"
 	_productHandler "group-project/limamart/delivery/handler/product"
 	_userHandler "group-project/limamart/delivery/handler/users"
 	_middlewares "group-project/limamart/delivery/middlewares"
@@ -40,4 +41,9 @@ func RegisterCartPath(e *echo.Echo, uh _cartHandler.CartHandler) {
 
 func RegisterCatagoryPath(e *echo.Echo, uh _catagoryHandler.CatagoryHandler) {
 	e.GET("/catagories", uh.GetAllCatagoryHandler(), _middlewares.JWTMiddleware())
+}
+
+func RegisterOrderPath(e *echo.Echo, uh _orderHandler.OrderHandler) {
+	e.GET("/order", uh.GetAllHandler(), _middlewares.JWTMiddleware())
+	e.POST("/order", uh.CreateOrderHandler(), _middlewares.JWTMiddleware())
 }
