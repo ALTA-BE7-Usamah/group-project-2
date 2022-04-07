@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"group-project/limamart/configs"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -33,6 +34,7 @@ import (
 	_orderUseCase "group-project/limamart/usecase/order"
 
 	_middlewares "group-project/limamart/delivery/middlewares"
+
 	_routes "group-project/limamart/delivery/routes"
 	_utils "group-project/limamart/utils"
 )
@@ -68,7 +70,10 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(_middlewares.CustomLogger())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
 
 	_routes.RegisterAuthPath(e, authHandler)
 	_routes.RegisterUserPath(e, userHandler)
