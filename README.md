@@ -26,6 +26,6 @@ In the Order section, user that already have a product list to buy on the shoppi
 * `/cart` with method `GET` to Read all the user's cart created by user that have logged in
 * `/cart/:id` with method `PUT` to edit the cart, either the product or quantity that user want to edit
 * `/cart/:id` with method `DELETE` to delete a cart
-* `/order` with method `POST` to create an order by inputing carts, shipping address, and creadit card details
+* `/order` with method `POST` to create an order by inputing carts, shipping address, and credit card details
 * `/order` with method `GET` to read all the order history
 
