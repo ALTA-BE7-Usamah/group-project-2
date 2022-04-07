@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"group-project/limamart/delivery/helper"
 	_middlewares "group-project/limamart/delivery/middlewares"
 	_entities "group-project/limamart/entities"
 
@@ -31,8 +32,7 @@ func (ar *AuthRepository) Login(email string, password string) (string, error) {
 		return "user not found", errors.New("user not found")
 	}
 
-	//jika ada, maka cek passwordnya
-	if user.Password != password {
+	if helper.CheckPassHash(password, user.Password) != true {
 		return "password incorrect", errors.New("password incorrect")
 	}
 
