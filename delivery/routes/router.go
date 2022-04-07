@@ -44,6 +44,6 @@ func RegisterCatagoryPath(e *echo.Echo, uh _catagoryHandler.CatagoryHandler) {
 }
 
 func RegisterOrderPath(e *echo.Echo, uh _orderHandler.OrderHandler) {
-	e.GET("/order", uh.GetAllHandler(), _middlewares.JWTMiddleware())
+	e.GET("/order", uh.GetAllOrdersHandler(), _middlewares.JWTMiddleware())
 	e.POST("/order", uh.CreateOrderHandler(), _middlewares.JWTMiddleware())
 }

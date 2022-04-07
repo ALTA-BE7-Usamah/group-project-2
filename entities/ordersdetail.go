@@ -4,9 +4,9 @@ import "gorm.io/gorm"
 
 type OrdersDetail struct {
 	gorm.Model
-	CartID      *uint  `json:"cart_id" form:"cart_id"`
-	OrderID     *uint  `json:"order_id" form:"order_id"`
-	StatusOrder string `gorm:"default:not yet paid" json:"status_order" form:"status_order"`
-	Cart        Cart   `gorm:"foreignKey:CartID;references:ID"`
-	Order       Order  `gorm:"foreignKey:OrderID;references:ID"`
+	UserID     uint    `json:"user_id" form:"user_id"`
+	ProductID  uint    `json:"product_id" form:"product_id"`
+	TotalPrice uint    `json:"total_price" form:"total_price"`
+	Status     string  `gorm:"default:in process" json:"status_order" form:"status_order"`
+	Product    Product `gorm:"foreignKey:ProductID;references:ID"`
 }

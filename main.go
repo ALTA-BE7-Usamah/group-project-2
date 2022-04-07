@@ -62,7 +62,7 @@ func main() {
 	catagoryHandler := _catagoryHandler.NewCatagoryHandler(catagoryUseCase)
 
 	orderRepo := _orderRepository.NewOrderRepository(db)
-	orderUseCase := _orderUseCase.NewOrderUseCase(orderRepo, cartRepo)
+	orderUseCase := _orderUseCase.NewOrderUseCase(orderRepo, cartRepo, productRepo)
 	orderHandler := _orderHandler.NewOrderHandler(orderUseCase)
 
 	e := echo.New()
