@@ -34,3 +34,5 @@ In the Order section, user that already have a product list to buy on the shoppi
 * `/order` with method `GET` to read all the order history
 * `/order/:id` with method `PUT` to cancel orders
 
+### OpenAPI
+* https://app.swaggerhub.com/apis-docs/abdurrahman.usamah07/ecommerce-api/1.0.0
