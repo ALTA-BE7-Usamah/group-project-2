@@ -32,14 +32,15 @@ func TestCreateUser(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepository{})
 		data, err := userUseCase.CreateUser(_entities.User{})
 		assert.Nil(t, nil, err)
-		assert.Equal(t, "odi", data.Name)
+		assert.Equal(t, "haudhi", data.Name)
 	})
-
+	
 	t.Run("TestCreateUserError", func(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepositoryError{})
 		data, err := userUseCase.CreateUser(_entities.User{})
 		assert.NotNil(t, err)
-		assert.Equal(t, _entities.User{}, data)
+		assert.Equal(t, "", data.Name)
+		assert.Nil(t, nil, data)
 	})
 }
 
@@ -48,7 +49,7 @@ func TestUpdateUser(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepository{})
 		data, rows, err := userUseCase.UpdateUser(1, _entities.User{})
 		assert.Nil(t, err)
-		assert.Equal(t, "odi", data.Name)
+		assert.Equal(t, "almas", data.Name)
 		assert.Equal(t, 1, rows)
 	})
 
@@ -88,13 +89,13 @@ func (m mockUserRepository) GetUserById(id int) (_entities.User, int, error) {
 
 func (m mockUserRepository) CreateUser(request _entities.User) (_entities.User, error) {
 	return _entities.User{
-		Name: "odi", Email: "odi@mail.com", Password: "lalala", PhoneNumber: "123", Address: "jkt",
+		Name: "haudhi", Email: "odi@mail.com", Password: "lalala", PhoneNumber: "123", Address: "jkt",
 	}, nil
 }
 
 func (m mockUserRepository) UpdateUser(request _entities.User) (_entities.User, int, error) {
 	return _entities.User{
-		Name: "odi", Email: "odi@mail.com", Password: "lalala", PhoneNumber: "123", Address: "jkt",
+		Name: "almas", Email: "odi@mail.com", Password: "lalala", PhoneNumber: "123", Address: "jkt",
 	}, 1, nil
 }
 

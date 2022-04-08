@@ -46,7 +46,7 @@ func TestCreateProduct(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
 		productUseCase := NewProductUseCase(mockProductRepository{})
-		data, rows, err := productUseCase.GetProductById(1)
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{}, 1, 1)
 		assert.Nil(t, err)
 		assert.Equal(t, "product 1", data.ProductTitle)
 		assert.Equal(t, 1, rows)
@@ -54,7 +54,7 @@ func TestUpdateProduct(t *testing.T) {
 
 	t.Run("TestUpdateProductError", func(t *testing.T) {
 		productUseCase := NewProductUseCase(mockProductRepositoryError{})
-		data, rows, err := productUseCase.GetProductById(1)
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{}, 1, 1)
 		assert.NotNil(t, err)
 		assert.Equal(t, 0, rows)
 		assert.Equal(t, _entities.Product{}, data)
