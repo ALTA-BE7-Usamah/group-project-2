@@ -16,11 +16,12 @@ In the Order section, user that already have a product list to buy on the shoppi
 ### EndPoint
 * `/users` with method `POST` to Create account/Register
 * `/auth` with method `POST` to Login to the system
-* `/users/:id` with method `GET` to Get one user details
+* `/users` with method `GET` to Read user details that logged in
 * `/users/:id` with method `PUT` to edit user details
 * `/users/:id` with method `DELETE` to delete account
 * `/products` with method `GET` to See all the products
 * `/products` with method `POST` to create product
+* `/product/users` with method `GET` to Read all user's product
 * `/products/:id` with method `GET` to get one product by id
 * `/products/:id` with method `PUT` to edit one product details by id
 * `/products/:id` with method `DELETE` to delete product
@@ -28,6 +29,8 @@ In the Order section, user that already have a product list to buy on the shoppi
 * `/cart` with method `GET` to Read all the user's cart created by user that have logged in
 * `/cart/:id` with method `PUT` to edit the cart, either the product or quantity that user want to edit
 * `/cart/:id` with method `DELETE` to delete a cart
+* `/catagories` with mehod `GET` to Read all the category
 * `/order` with method `POST` to create an order by inputing carts, shipping address, and credit card details
 * `/order` with method `GET` to read all the order history
+* `/order/:id` with method `PUT` to cancel orders
 
