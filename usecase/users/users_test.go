@@ -30,24 +30,61 @@ func TestGetUserById(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	t.Run("TestCreateUserSuccess", func(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepository{})
-		data, err := userUseCase.CreateUser(_entities.User{})
+		data, err := userUseCase.CreateUser(_entities.User{Name: "odi"})
 		assert.Nil(t, nil, err)
 		assert.Equal(t, "haudhi", data.Name)
 	})
-	
+
+	t.Run("TestCreateUser2Success", func(t *testing.T) {
+		userUseCase := NewUserUseCase(mockUserRepository{})
+		data, err := userUseCase.CreateUser(_entities.User{Name: "odi", Email: "odi@mail.com"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, "haudhi", data.Name)
+	})
+
+	t.Run("TestCreateUser3Success", func(t *testing.T) {
+		userUseCase := NewUserUseCase(mockUserRepository{})
+		data, err := userUseCase.CreateUser(_entities.User{Name: "odi", Email: "odi@mail.com", Password: "lalala"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, "haudhi", data.Name)
+	})
+
+	t.Run("TestCreateUser4Success", func(t *testing.T) {
+		userUseCase := NewUserUseCase(mockUserRepository{})
+		data, err := userUseCase.CreateUser(_entities.User{Name: "odi", Email: "odi@mail.com", PhoneNumber: "123"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, "haudhi", data.Name)
+	})
+
 	t.Run("TestCreateUserError", func(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepositoryError{})
-		data, err := userUseCase.CreateUser(_entities.User{})
+		data, err := userUseCase.CreateUser(_entities.User{Name: "odi"})
 		assert.NotNil(t, err)
 		assert.Equal(t, "", data.Name)
-		assert.Nil(t, nil, data)
+		assert.Nil(t, nil, err)
 	})
 }
 
 func TestUpdateUser(t *testing.T) {
 	t.Run("TestUpdateUserSuccess", func(t *testing.T) {
 		userUseCase := NewUserUseCase(mockUserRepository{})
-		data, rows, err := userUseCase.UpdateUser(1, _entities.User{})
+		data, rows, err := userUseCase.UpdateUser(1, _entities.User{Name: "almas"})
+		assert.Nil(t, err)
+		assert.Equal(t, "almas", data.Name)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateUserSuccess", func(t *testing.T) {
+		userUseCase := NewUserUseCase(mockUserRepository{})
+		data, rows, err := userUseCase.UpdateUser(1, _entities.User{Name: "almas", Email: "odi@mail.com"})
+		assert.Nil(t, err)
+		assert.Equal(t, "almas", data.Name)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateUserSuccess", func(t *testing.T) {
+		userUseCase := NewUserUseCase(mockUserRepository{})
+		data, rows, err := userUseCase.UpdateUser(1, _entities.User{Name: "almas", Email: "odi@mail.com", PhoneNumber: "123"})
 		assert.Nil(t, err)
 		assert.Equal(t, "almas", data.Name)
 		assert.Equal(t, 1, rows)
@@ -58,7 +95,7 @@ func TestUpdateUser(t *testing.T) {
 		data, rows, err := userUseCase.UpdateUser(1, _entities.User{})
 		assert.NotNil(t, err)
 		assert.Equal(t, 0, rows)
-		assert.Nil(t, nil, data)
+		assert.Nil(t, nil, data.Name)
 	})
 }
 

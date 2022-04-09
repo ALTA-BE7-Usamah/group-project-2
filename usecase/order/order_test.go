@@ -65,9 +65,9 @@ func TestGetHistoryByID(t *testing.T) {
 func TestCancelOrder(t *testing.T) {
 	t.Run("TestcancelOrderSuccess", func(t *testing.T) {
 		orderUseCase := NewOrderUseCase(mockOrderRepository{}, mockCartRepository{}, mockProductRepository{})
-		data, rows, err := orderUseCase.CancelOrder(_entities.OrdersDetail{}, 2, 2)
+		data, rows, err := orderUseCase.CancelOrder(_entities.OrdersDetail{UserID: 1}, 1, 1)
 		assert.Nil(t, nil, err)
-		assert.Equal(t, uint(1), data.UserID)
+		assert.NotEqual(t, uint(0), data.UserID)
 		assert.Equal(t, 1, rows)
 	})
 
