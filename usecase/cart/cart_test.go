@@ -26,12 +26,47 @@ func TestGetAll(t *testing.T) {
 	})
 }
 
+func TestGetCartById(t *testing.T) {
+	t.Run("TestGetCartByIdSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, rows, err := cartUseCase.GetCartById(1)
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.UserID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestGetCartByIdError", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepositoryError{}, mockProductRepositoryError{})
+		data, rows, err := cartUseCase.GetCartById(1)
+		assert.NotNil(t, err)
+		assert.Nil(t, nil, data)
+		assert.Nil(t, nil, rows)
+	})
+}
+
 func TestCreateCart(t *testing.T) {
+	t.Run("TestCreateCartSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, err := cartUseCase.CreateCart(_entities.Cart{ProductID: 1})
+		assert.Nil(t, nil, err)
+		assert.NotNil(t, err)
+		assert.Equal(t, uint(1), data.ProductID)
+	})
+
+	t.Run("TestCreateCartSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, err := cartUseCase.CreateCart(_entities.Cart{ProductID: 1, Qty: 3})
+		assert.Nil(t, nil, err)
+		assert.NotNil(t, err)
+		assert.Equal(t, uint(0), data.ProductID)
+	})
+
 	t.Run("TestCreateCartSuccess", func(t *testing.T) {
 		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
 		data, err := cartUseCase.CreateCart(_entities.Cart{})
 		assert.Nil(t, nil, err)
-		assert.Equal(t, uint(0), data.ProductID)
+		assert.NotNil(t, err)
+		assert.Equal(t, _entities.Cart{}, data)
 	})
 
 	t.Run("TestCreateCartError", func(t *testing.T) {
@@ -49,6 +84,22 @@ func TestUpdateCart(t *testing.T) {
 		assert.Nil(t, nil, err)
 		assert.Equal(t, uint(1), data.UserID)
 		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestCreateCartSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, rows, err := cartUseCase.UpdateCart(1, 1, _entities.Cart{ProductID: 1})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.UserID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestCreateCartSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, rows, err := cartUseCase.UpdateCart(1, 1, _entities.Cart{ProductID: 1, Qty: 3})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(0), data.UserID)
+		assert.Equal(t, 0, rows)
 	})
 
 	t.Run("TestCreateCartError", func(t *testing.T) {

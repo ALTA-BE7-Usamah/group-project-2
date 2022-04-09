@@ -30,25 +30,102 @@ func TestGetProductById(t *testing.T) {
 func TestCreateProduct(t *testing.T) {
 	t.Run("TestCreateProductSuccess", func(t *testing.T) {
 		productUseCase := NewProductUseCase(mockProductRepository{})
-		data, err := productUseCase.CreateProduct(_entities.Product{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1})
 		assert.Nil(t, nil, err)
-		assert.Equal(t, "product 1", data.ProductTitle)
+		assert.Equal(t, uint(1), data.CatagoryID)
 	})
+
+	t.Run("TestCreateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+	})
+
+	t.Run("TestCreateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+	})
+
+	t.Run("TestCreateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+	})
+
+	t.Run("TestCreateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, Stock: 3})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+	})
+
+	t.Run("TestCreateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, err := productUseCase.CreateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, Stock: 3, UrlProduct: "url"})
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+	})
+
 
 	t.Run("TestGetProductByIdError", func(t *testing.T) {
 		productUseCase := NewProductUseCase(mockProductRepositoryError{})
 		data, err := productUseCase.CreateProduct(_entities.Product{})
 		assert.NotNil(t, err)
 		assert.Equal(t, _entities.Product{}, data)
+		assert.Nil(t, nil, err)
 	})
 }
 
 func TestUpdateProduct(t *testing.T) {
 	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
 		productUseCase := NewProductUseCase(mockProductRepository{})
-		data, rows, err := productUseCase.UpdateProduct(_entities.Product{}, 1, 1)
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1}, 1, 1)
 		assert.Nil(t, err)
-		assert.Equal(t, "product 1", data.ProductTitle)
+		assert.Equal(t, uint(1), data.CatagoryID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1"}, 1, 1)
+		assert.Nil(t, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc"}, 1, 1)
+		assert.Nil(t, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000}, 1, 1)
+		assert.Nil(t, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, Stock: 5}, 1, 1)
+		assert.Nil(t, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
+		assert.Equal(t, 1, rows)
+	})
+
+	t.Run("TestUpdateProductSuccess", func(t *testing.T) {
+		productUseCase := NewProductUseCase(mockProductRepository{})
+		data, rows, err := productUseCase.UpdateProduct(_entities.Product{CatagoryID: 1, ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, Stock: 5, UrlProduct: "url"}, 1, 1)
+		assert.Nil(t, err)
+		assert.Equal(t, uint(1), data.CatagoryID)
 		assert.Equal(t, 1, rows)
 	})
 
