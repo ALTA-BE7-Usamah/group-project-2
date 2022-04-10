@@ -34,7 +34,7 @@ func (uuc *CartUseCase) GetCartByProductId(idProduct int) ([]_entities.Cart, int
 	return carts, rows, err
 }
 
-func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, error) {
+func (uuc *CartUseCase) CreateCart(request _entities.Cart, idToken uint) (_entities.Cart, error) {
 	products, rows, err := uuc.productRepository.GetProductById(int(request.ProductID))
 	if rows == 0 {
 		return request, errors.New("failed product by id")
@@ -51,11 +51,29 @@ func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, erro
 	if request.Qty > products.Stock {
 		return _entities.Cart{}, errors.New("this product is out of stock")
 	}
-
 	request.SubTotal = request.Qty * products.Price
 
-	carts, err := uuc.cartRepository.CreateCart(request)
-	return carts, err
+	carts, rows, err := uuc.cartRepository.GetAll(int(idToken))
+	if rows == 0 {
+		return request, errors.New("failed product by id")
+	}
+	if err != nil {
+		return request, err
+	}
+	for i := 0; i < len(carts); i++ {
+		if carts[i].ProductID == request.ProductID {
+			if carts[i].Qty+request.Qty > products.Stock {
+				return _entities.Cart{}, errors.New("this product is out of stock")
+			}
+			carts[i].Qty += request.Qty
+			carts[i].SubTotal += (request.Qty * products.Price)
+			cart, err := uuc.cartRepository.CreateCart(carts[i])
+			return cart, err
+		}
+	}
+
+	cartCreate, errCreate := uuc.cartRepository.CreateCart(request)
+	return cartCreate, errCreate
 }
 
 func (uuc *CartUseCase) UpdateCart(id int, idToken uint, request _entities.Cart) (_entities.Cart, int, error) {
