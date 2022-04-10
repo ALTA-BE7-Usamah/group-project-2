@@ -41,8 +41,8 @@ func (ur *CartRepository) GetCartById(id int) (_entities.Cart, int, error) {
 	return carts, int(tx.RowsAffected), nil
 }
 
-func (ur *CartRepository) GetCartByProductId(idProduct int) (_entities.Cart, int, error) {
-	var cart _entities.Cart
+func (ur *CartRepository) GetCartByProductId(idProduct int) ([]_entities.Cart, int, error) {
+	var cart []_entities.Cart
 	tx := ur.DB.Where("product_id = ?", idProduct).Find(&cart)
 	if tx.Error != nil {
 		return cart, 0, tx.Error
