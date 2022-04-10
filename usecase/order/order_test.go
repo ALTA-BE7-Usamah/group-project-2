@@ -11,17 +11,19 @@ import (
 func TestGetAllOrder(t *testing.T) {
 	t.Run("TestGetAllSuccess", func(t *testing.T) {
 		orderUseCase := NewOrderUseCase(mockOrderRepository{}, mockCartRepository{}, mockProductRepository{})
-		data, rows, err := orderUseCase.GetAllOrder(1)
+		data, product, rows, err := orderUseCase.GetAllOrder(1)
 		assert.Nil(t, nil, err)
 		assert.Equal(t, uint(1), data[0].UserID)
+		assert.Equal(t, "product 1", product[0].ProductTitle)
 		assert.Equal(t, 1, rows)
 	})
 
 	t.Run("TestGetAllError", func(t *testing.T) {
 		orderUseCase := NewOrderUseCase(mockOrderRepositoryError{}, mockCartRepositoryError{}, mockProductRepositoryError{})
-		data, rows, err := orderUseCase.GetAllOrder(1)
+		data, product, rows, err := orderUseCase.GetAllOrder(1)
 		assert.NotNil(t, err)
 		assert.Nil(t, data)
+		assert.Nil(t, product)
 		assert.Nil(t, nil, rows)
 	})
 }
@@ -127,61 +129,6 @@ func (m mockOrderRepositoryError) CancelOrder(cancelOrder _entities.OrdersDetail
 }
 
 // === mock success ===
-type mockCartRepository struct{}
-
-func (m mockCartRepository) GetAll(idToken int) ([]_entities.Cart, int, error) {
-	return []_entities.Cart{
-		{UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000},
-	}, 1, nil
-}
-
-func (m mockCartRepository) GetCartById(id int) (_entities.Cart, int, error) {
-	return _entities.Cart{
-		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
-	}, 1, nil
-}
-
-func (m mockCartRepository) CreateCart(request _entities.Cart) (_entities.Cart, error) {
-	return _entities.Cart{
-		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
-	}, nil
-}
-
-func (m mockCartRepository) UpdateCart(request _entities.Cart) (_entities.Cart, int, error) {
-	return _entities.Cart{
-		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
-	}, 1, nil
-}
-
-func (m mockCartRepository) DeleteCart(id int) error {
-	return nil
-}
-
-// === mock error ===
-
-type mockCartRepositoryError struct{}
-
-func (m mockCartRepositoryError) GetAll(idToken int) ([]_entities.Cart, int, error) {
-	return nil, 1, fmt.Errorf("error get all cart")
-}
-
-func (m mockCartRepositoryError) GetCartById(id int) (_entities.Cart, int, error) {
-	return _entities.Cart{}, 1, fmt.Errorf("error get all cart")
-}
-
-func (m mockCartRepositoryError) CreateCart(request _entities.Cart) (_entities.Cart, error) {
-	return _entities.Cart{}, fmt.Errorf("error create cart")
-}
-
-func (m mockCartRepositoryError) UpdateCart(request _entities.Cart) (_entities.Cart, int, error) {
-	return _entities.Cart{}, 0, fmt.Errorf("error update cart")
-}
-
-func (m mockCartRepositoryError) DeleteCart(id int) error {
-	return fmt.Errorf("error delete cart")
-}
-
-// === mock success ===
 type mockProductRepository struct{}
 
 func (m mockProductRepository) GetProductById(id int) (_entities.Product, int, error) {
@@ -214,9 +161,10 @@ func (m mockProductRepository) UpdateProduct(request _entities.Product) (_entiti
 	}, 1, nil
 }
 
-func (m mockProductRepository) DeleteProduct(id int) error {
+func (m mockProductRepository) DeleteProduct(id int, cart []_entities.Cart) error {
 	return nil
 }
+
 
 // === mock error ===
 
@@ -242,6 +190,71 @@ func (m mockProductRepositoryError) UpdateProduct(request _entities.Product) (_e
 	return _entities.Product{}, 0, fmt.Errorf("error update data user")
 }
 
-func (m mockProductRepositoryError) DeleteProduct(id int) error {
+func (m mockProductRepositoryError) DeleteProduct(id int, cart []_entities.Cart) (error) {
 	return fmt.Errorf("error update data user")
+}
+
+// === mock success ===
+type mockCartRepository struct{}
+
+func (m mockCartRepository) GetCartByProductId(idProduct int) ([]_entities.Cart, int, error) {
+	return []_entities.Cart{
+		{UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000},
+	}, 1, nil
+}
+func (m mockCartRepository) GetAll(idToken int) ([]_entities.Cart, int, error) {
+	return []_entities.Cart{
+		{UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000},
+	}, 1, nil
+}
+
+func (m mockCartRepository) GetCartById(id int) (_entities.Cart, int, error) {
+	return _entities.Cart{
+		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
+	}, 1, nil
+}
+
+func (m mockCartRepository) CreateCart(request _entities.Cart) (_entities.Cart, error) {
+	return _entities.Cart{
+		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
+	}, nil
+}
+
+func (m mockCartRepository) UpdateCart(request _entities.Cart) (_entities.Cart, int, error) {
+	return _entities.Cart{
+		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
+	}, 1, nil
+}
+
+func (m mockCartRepository) DeleteCart(id int) error {
+	return nil
+}
+
+
+// === mock error ===
+
+type mockCartRepositoryError struct{}
+
+func (m mockCartRepositoryError) GetAll(idToken int) ([]_entities.Cart, int, error) {
+	return nil, 1, fmt.Errorf("error get all cart")
+}
+
+func (m mockCartRepositoryError) GetCartByProductId(idProduct int) ([]_entities.Cart, int, error) {
+	return nil, 1, fmt.Errorf("error get all cart")
+}
+
+func (m mockCartRepositoryError) GetCartById(id int) (_entities.Cart, int, error) {
+	return _entities.Cart{}, 1, fmt.Errorf("error get all cart")
+}
+
+func (m mockCartRepositoryError) CreateCart(request _entities.Cart) (_entities.Cart, error) {
+	return _entities.Cart{}, fmt.Errorf("error create cart")
+}
+
+func (m mockCartRepositoryError) UpdateCart(request _entities.Cart) (_entities.Cart, int, error) {
+	return _entities.Cart{}, 0, fmt.Errorf("error update cart")
+}
+
+func (m mockCartRepositoryError) DeleteCart(id int) (error) {
+	return fmt.Errorf("error delete cart")
 }
