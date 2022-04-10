@@ -55,7 +55,7 @@ func (ur *ProductRepository) UpdateProduct(request _entities.Product) (_entities
 
 func (ur *ProductRepository) DeleteProduct(id int) error {
 
-	err := ur.DB.Unscoped().Delete(&_entities.Product{}, id).Error
+	err := ur.DB.Delete(&_entities.Product{}, id).Error
 	if err != nil {
 		return err
 	}
