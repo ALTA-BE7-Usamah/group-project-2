@@ -29,7 +29,7 @@ func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, int, error) {
 	return carts, rows, err
 }
 
-func (uuc *CartUseCase) GetCartByProductId(idProduct int) (_entities.Cart, int, error) {
+func (uuc *CartUseCase) GetCartByProductId(idProduct int) ([]_entities.Cart, int, error) {
 	carts, rows, err := uuc.cartRepository.GetCartByProductId(idProduct)
 	return carts, rows, err
 }

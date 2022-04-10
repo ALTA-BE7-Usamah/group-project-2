@@ -53,10 +53,13 @@ func (ur *ProductRepository) UpdateProduct(request _entities.Product) (_entities
 	return request, int(tx.RowsAffected), nil
 }
 
-func (ur *ProductRepository) DeleteProduct(id int, cart _entities.Cart) error {
-	errCart := ur.DB.Unscoped().Delete(&_entities.Cart{}, cart.ID).Error
-	if errCart != nil {
-		return errCart
+func (ur *ProductRepository) DeleteProduct(id int, cart []_entities.Cart) error {
+	for i := 0; i < len(cart); i++ {
+		var cartDelete _entities.Cart
+		errCart := ur.DB.Unscoped().Delete(cartDelete, cart[i].ProductID).Error
+		if errCart != nil {
+			return errCart
+		}
 	}
 
 	err := ur.DB.Delete(&_entities.Product{}, id).Error
