@@ -14,6 +14,9 @@ func TestGetAll(t *testing.T) {
 		data, rows, err := cartUseCase.GetAll(1)
 		assert.Nil(t, nil, err)
 		assert.Equal(t, uint(1), data[0].UserID)
+		assert.Equal(t, uint(2), data[1].UserID)
+		assert.Equal(t, uint(3), data[2].UserID)
+		assert.Equal(t, uint(4), data[3].UserID)
 		assert.Equal(t, 1, rows)
 	})
 
@@ -87,6 +90,17 @@ func TestCreateCart(t *testing.T) {
 		assert.Equal(t, _entities.Cart{}, data)
 	})
 
+	t.Run("TestCreateCartSuccess", func(t *testing.T) {
+		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
+		data, err := cartUseCase.CreateCart(_entities.Cart{ProductID: 2, UserID: 2, SubTotal: 2, Qty: 2}, 0)
+		assert.Nil(t, nil, err)
+		assert.Equal(t, uint(1), data.ProductID)
+		assert.Equal(t, uint(1), data.UserID)
+		assert.Equal(t, uint(3), data.Qty)
+		assert.Equal(t, uint(5000), data.SubTotal)
+	})
+
+
 	t.Run("TestCreateCartError", func(t *testing.T) {
 		cartUseCase := NewCartUseCase(mockCartRepositoryError{}, mockProductRepositoryError{})
 		data, err := cartUseCase.CreateCart(_entities.Cart{}, 2)
@@ -116,9 +130,10 @@ func TestUpdateCart(t *testing.T) {
 		cartUseCase := NewCartUseCase(mockCartRepository{}, mockProductRepository{})
 		data, rows, err := cartUseCase.UpdateCart(1, 1, _entities.Cart{ProductID: 1, Qty: 3})
 		assert.Nil(t, nil, err)
-		assert.Equal(t, uint(0), data.UserID)
-		assert.Equal(t, 0, rows)
+		assert.Equal(t, uint(1), data.UserID)
+		assert.Equal(t, 1, rows)
 	})
+
 
 	t.Run("TestCreateCartError", func(t *testing.T) {
 		cartUseCase := NewCartUseCase(mockCartRepositoryError{}, mockProductRepositoryError{})
@@ -150,7 +165,7 @@ type mockProductRepository struct{}
 
 func (m mockProductRepository) GetProductById(id int) (_entities.Product, int, error) {
 	return _entities.Product{
-		ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, UserID: 1, CatagoryID: 1, Stock: 2, UrlProduct: "url",
+		ProductTitle: "product 1", ProductDesc: "desc", Price: 5000, UserID: 1, CatagoryID: 1, Stock: 5, UrlProduct: "url",
 	}, 1, nil
 }
 
@@ -221,7 +236,10 @@ func (m mockCartRepository) GetCartByProductId(idProduct int) ([]_entities.Cart,
 }
 func (m mockCartRepository) GetAll(idToken int) ([]_entities.Cart, int, error) {
 	return []_entities.Cart{
-		{UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000},
+		{UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000, Product: _entities.Product{ProductTitle: "p", ProductDesc: "p", Stock: 5, Price: 5, UserID: 5, UrlProduct: "url", CatagoryID: 5}},
+		{UserID: 2, ProductID: 2, Qty: 3, SubTotal: 5000, Product: _entities.Product{ProductTitle: "p", ProductDesc: "p", Stock: 5, Price: 5, UserID: 5, UrlProduct: "url", CatagoryID: 5}},
+		{UserID: 3, ProductID: 1, Qty: 3, SubTotal: 5000, Product: _entities.Product{ProductTitle: "p", ProductDesc: "p", Stock: 5, Price: 5, UserID: 5, UrlProduct: "url", CatagoryID: 5}},
+		{UserID: 4, ProductID: 1, Qty: 3, SubTotal: 5000, Product: _entities.Product{ProductTitle: "p", ProductDesc: "p", Stock: 5, Price: 5, UserID: 5, UrlProduct: "url", CatagoryID: 5}},
 	}, 1, nil
 }
 
@@ -233,7 +251,7 @@ func (m mockCartRepository) GetCartById(id int) (_entities.Cart, int, error) {
 
 func (m mockCartRepository) CreateCart(request _entities.Cart) (_entities.Cart, error) {
 	return _entities.Cart{
-		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000,
+		UserID: 1, ProductID: 1, Qty: 3, SubTotal: 5000, 
 	}, nil
 }
 
