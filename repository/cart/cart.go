@@ -41,6 +41,18 @@ func (ur *CartRepository) GetCartById(id int) (_entities.Cart, int, error) {
 	return carts, int(tx.RowsAffected), nil
 }
 
+func (ur *CartRepository) GetCartByProductId(idProduct int) (_entities.Cart, int, error) {
+	var cart _entities.Cart
+	tx := ur.DB.Where("product_id = ?", idProduct).Find(&cart)
+	if tx.Error != nil {
+		return cart, 0, tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return cart, 0, nil
+	}
+	return cart, int(tx.RowsAffected), nil
+}
+
 func (ur *CartRepository) CreateCart(request _entities.Cart) (_entities.Cart, error) {
 	yx := ur.DB.Save(&request)
 	if yx.Error != nil {

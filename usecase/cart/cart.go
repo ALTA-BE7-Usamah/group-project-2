@@ -29,6 +29,11 @@ func (uuc *CartUseCase) GetCartById(id int) (_entities.Cart, int, error) {
 	return carts, rows, err
 }
 
+func (uuc *CartUseCase) GetCartByProductId(idProduct int) (_entities.Cart, int, error) {
+	carts, rows, err := uuc.cartRepository.GetCartByProductId(idProduct)
+	return carts, rows, err
+}
+
 func (uuc *CartUseCase) CreateCart(request _entities.Cart) (_entities.Cart, error) {
 	products, rows, err := uuc.productRepository.GetProductById(int(request.ProductID))
 	if rows == 0 {

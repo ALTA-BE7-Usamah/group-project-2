@@ -50,7 +50,8 @@ func main() {
 	userHandler := _userHandler.NewUserHandler(userUseCase)
 
 	productRepo := _productRepository.NewProductRepository(db)
-	productUseCase := _productUseCase.NewProductUseCase(productRepo)
+	cartRepo2 := _cartRepository.NewCartRepository(db)
+	productUseCase := _productUseCase.NewProductUseCase(productRepo, cartRepo2)
 	productHandler := _productHandler.NewProductHandler(productUseCase)
 
 	cartRepo := _cartRepository.NewCartRepository(db)

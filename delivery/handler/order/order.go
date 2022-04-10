@@ -29,7 +29,7 @@ func (uh *OrderHandler) GetAllOrdersHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 
-		orders, rows, err := uh.orderUseCase.GetAllOrder(idToken)
+		orders, products, rows, err := uh.orderUseCase.GetAllOrder(idToken)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
 		}
@@ -46,12 +46,13 @@ func (uh *OrderHandler) GetAllOrdersHandler() echo.HandlerFunc {
 				"total_price": orders[i].TotalPrice,
 				"status":      orders[i].Status,
 				"product": map[string]interface{}{
-					"user_id":       orders[i].Product.UserID,
-					"catagory_id":   orders[i].Product.CatagoryID,
-					"product_title": orders[i].Product.ProductTitle,
-					"price":         orders[i].Product.Price,
-					"stock":         orders[i].Product.Stock,
-					"url_product":   orders[i].Product.UrlProduct},
+					"id":            products[i].ID,
+					"user_id":       products[i].UserID,
+					"catagory_id":   products[i].CatagoryID,
+					"product_title": products[i].ProductTitle,
+					"price":         products[i].Price,
+					"stock":         products[i].Stock,
+					"url_product":   products[i].UrlProduct},
 			}
 
 			responseOrders = append(responseOrders, response)

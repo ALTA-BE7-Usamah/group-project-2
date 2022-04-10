@@ -3,16 +3,19 @@ package product
 import (
 	"errors"
 	_entities "group-project/limamart/entities"
+	_cartRepository "group-project/limamart/repository/cart"
 	_productRepository "group-project/limamart/repository/product"
 )
 
 type ProductUseCase struct {
 	productRepository _productRepository.ProductRepositoryInterface
+	cartRepository    _cartRepository.CartRepositoryInterface
 }
 
-func NewProductUseCase(productRepo _productRepository.ProductRepositoryInterface) ProductUseCaseInterface {
+func NewProductUseCase(productRepo _productRepository.ProductRepositoryInterface, cartRepo _cartRepository.CartRepositoryInterface) ProductUseCaseInterface {
 	return &ProductUseCase{
 		productRepository: productRepo,
+		cartRepository:    cartRepo,
 	}
 }
 
@@ -78,8 +81,17 @@ func (uuc *ProductUseCase) UpdateProduct(request _entities.Product, id uint, idT
 }
 
 func (uuc *ProductUseCase) DeleteProduct(id int) error {
-	err := uuc.productRepository.DeleteProduct(id)
-	return err
+	product, _, err := uuc.productRepository.GetProductById(id)
+	if err != nil {
+		return err
+	}
+
+	cart, _, err := uuc.cartRepository.GetCartByProductId(int(product.ID))
+	if err != nil {
+		return err
+	}
+	errDelete := uuc.productRepository.DeleteProduct(id, cart)
+	return errDelete
 }
 
 func (uuc *ProductUseCase) GetProductById(id int) (_entities.Product, int, error) {

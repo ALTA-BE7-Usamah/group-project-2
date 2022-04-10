@@ -27,7 +27,7 @@ func (ur *ProductRepository) GetAll() ([]_entities.Product, error) {
 
 func (ur *ProductRepository) GetProductById(id int) (_entities.Product, int, error) {
 	var products _entities.Product
-	tx := ur.DB.Find(&products, id)
+	tx := ur.DB.Unscoped().Find(&products, id)
 	if tx.Error != nil {
 		return products, 0, tx.Error
 	}
@@ -53,7 +53,11 @@ func (ur *ProductRepository) UpdateProduct(request _entities.Product) (_entities
 	return request, int(tx.RowsAffected), nil
 }
 
-func (ur *ProductRepository) DeleteProduct(id int) error {
+func (ur *ProductRepository) DeleteProduct(id int, cart _entities.Cart) error {
+	errCart := ur.DB.Unscoped().Delete(&_entities.Cart{}, cart.ID).Error
+	if errCart != nil {
+		return errCart
+	}
 
 	err := ur.DB.Delete(&_entities.Product{}, id).Error
 	if err != nil {
