@@ -80,11 +80,6 @@ func TestCancelOrder(t *testing.T) {
 	})
 }
 
-
-
-
-
-
 type mockOrderRepository struct{}
 
 func (m mockOrderRepository) GetAllOrder(idToken int) ([]_entities.OrdersDetail, int, error) {
@@ -131,8 +126,6 @@ func (m mockOrderRepositoryError) CancelOrder(cancelOrder _entities.OrdersDetail
 	return _entities.OrdersDetail{}, 0, fmt.Errorf("error cancel order")
 }
 
-
-
 // === mock success ===
 type mockCartRepository struct{}
 
@@ -164,7 +157,6 @@ func (m mockCartRepository) DeleteCart(id int) error {
 	return nil
 }
 
-
 // === mock error ===
 
 type mockCartRepositoryError struct{}
@@ -185,7 +177,7 @@ func (m mockCartRepositoryError) UpdateCart(request _entities.Cart) (_entities.C
 	return _entities.Cart{}, 0, fmt.Errorf("error update cart")
 }
 
-func (m mockCartRepositoryError) DeleteCart(id int) (error) {
+func (m mockCartRepositoryError) DeleteCart(id int) error {
 	return fmt.Errorf("error delete cart")
 }
 
@@ -226,7 +218,6 @@ func (m mockProductRepository) DeleteProduct(id int) error {
 	return nil
 }
 
-
 // === mock error ===
 
 type mockProductRepositoryError struct{}
@@ -251,8 +242,6 @@ func (m mockProductRepositoryError) UpdateProduct(request _entities.Product) (_e
 	return _entities.Product{}, 0, fmt.Errorf("error update data user")
 }
 
-func (m mockProductRepositoryError) DeleteProduct(id int) (error) {
+func (m mockProductRepositoryError) DeleteProduct(id int) error {
 	return fmt.Errorf("error update data user")
 }
-
-

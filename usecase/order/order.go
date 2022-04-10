@@ -22,9 +22,21 @@ func NewOrderUseCase(orderRepo _orderRepository.OrderRepositoryInterface, cartRe
 	}
 }
 
-func (uuc *OrderUseCase) GetAllOrder(idToken int) ([]_entities.OrdersDetail, int, error) {
+func (uuc *OrderUseCase) GetAllOrder(idToken int) ([]_entities.OrdersDetail, []_entities.Product, int, error) {
 	order, rows, err := uuc.orderRepository.GetAllOrder(idToken)
-	return order, rows, err
+
+	var products []_entities.Product
+	for i := 0; i < len(order); i++ {
+		product, rows, err := uuc.productRepository.GetProductById(int(order[i].ProductID))
+		if rows == 0 {
+			return order, products, 0, errors.New("failed get product")
+		}
+		if err != nil {
+			return order, products, 0, err
+		}
+		products = append(products, product)
+	}
+	return order, products, rows, err
 }
 
 func (uuc *OrderUseCase) CreateOrder(creatOrder _entities.Order, orderCartID []uint, idToken uint) (_entities.Order, int, error) {
