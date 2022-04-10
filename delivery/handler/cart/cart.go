@@ -43,6 +43,7 @@ func (uh *CartHandler) GetAllHandler() echo.HandlerFunc {
 				"id":         carts[i].ID,
 				"user_id":    carts[i].UserID,
 				"product_id": carts[i].ProductID,
+				"qty":        carts[i].Qty,
 				"sub_total":  carts[i].SubTotal,
 				"product": map[string]interface{}{
 					"user_id":       carts[i].Product.UserID,
@@ -113,6 +114,7 @@ func (uh *CartHandler) UpdateCartHandler() echo.HandlerFunc {
 			"id":         carts.ID,
 			"user_id":    carts.UserID,
 			"product_id": carts.ProductID,
+			"qty":        carts.Qty,
 			"sub_total":  carts.SubTotal,
 			"product": map[string]interface{}{
 				"user_id":       carts.Product.UserID,
