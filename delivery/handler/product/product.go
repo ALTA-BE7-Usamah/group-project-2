@@ -1,7 +1,6 @@
 package product
 
 import (
-	"fmt"
 	"group-project/limamart/delivery/helper"
 	_middlewares "group-project/limamart/delivery/middlewares"
 	_productUseCase "group-project/limamart/usecase/product"
@@ -29,7 +28,23 @@ func (uh *ProductHandler) GetAllHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all products", products))
+
+		responseProduct := []map[string]interface{}{}
+		for i := 0; i < len(products); i++ {
+			response := map[string]interface{}{
+				"id":            products[i].ID,
+				"user_id":       products[i].UserID,
+				"catagory_id":   products[i].CatagoryID,
+				"product_title": products[i].ProductTitle,
+				"product_desc":  products[i].ProductDesc,
+				"price":         products[i].Price,
+				"stock":         products[i].Stock,
+				"url_product":   products[i].UrlProduct,
+			}
+			responseProduct = append(responseProduct, response)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all products", responseProduct))
 	}
 }
 
@@ -44,17 +59,17 @@ func (uh *ProductHandler) CreateProductHandler() echo.HandlerFunc {
 
 		var param _entities.Product
 
-		err := c.Bind(&param)
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
+		errBind := c.Bind(&param)
+		if errBind != nil {
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(errBind.Error()))
 		}
 		param.UserID = uint(idToken)
 
-		products, err := uh.productUseCase.CreateProduct(param)
+		_, err := uh.productUseCase.CreateProduct(param)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success create product", products))
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success create product"))
 	}
 }
 
@@ -87,7 +102,19 @@ func (uh *ProductHandler) UpdateProductHandler() echo.HandlerFunc {
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data product", product))
+
+		responseProduct := map[string]interface{}{
+			"id":            product.ID,
+			"user_id":       product.UserID,
+			"catagory_id":   product.CatagoryID,
+			"product_title": product.ProductTitle,
+			"product_desc":  product.ProductDesc,
+			"price":         product.Price,
+			"stock":         product.Stock,
+			"url_product":   product.UrlProduct,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data product", responseProduct))
 	}
 }
 
@@ -99,7 +126,6 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 		if errToken != nil {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
-		fmt.Println("id token", idToken)
 
 		id, _ := strconv.Atoi(c.Param("id"))
 
@@ -118,7 +144,7 @@ func (uh *ProductHandler) DeleteProductHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success delete product", err))
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success delete product"))
 	}
 }
 
@@ -137,7 +163,19 @@ func (uh *ProductHandler) GetProductByIdHandler() echo.HandlerFunc {
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get product by id", product))
+
+		responseProduct := map[string]interface{}{
+			"id":            product.ID,
+			"user_id":       product.UserID,
+			"catagory_id":   product.CatagoryID,
+			"product_title": product.ProductTitle,
+			"product_desc":  product.ProductDesc,
+			"price":         product.Price,
+			"stock":         product.Stock,
+			"url_product":   product.UrlProduct,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get product by id", responseProduct))
 	}
 }
 
@@ -153,6 +191,22 @@ func (uh *ProductHandler) GetAllProductUserHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all tasks", products))
+
+		responseProducts := []map[string]interface{}{}
+		for i := 0; i < len(products); i++ {
+			response := map[string]interface{}{
+				"id":            products[i].ID,
+				"user_id":       products[i].UserID,
+				"catagory_id":   products[i].CatagoryID,
+				"product_title": products[i].ProductTitle,
+				"product_desc":  products[i].ProductDesc,
+				"price":         products[i].Price,
+				"stock":         products[i].Stock,
+				"url_product":   products[i].UrlProduct,
+			}
+			responseProducts = append(responseProducts, response)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all tasks", responseProducts))
 	}
 }

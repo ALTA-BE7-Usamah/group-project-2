@@ -25,7 +25,7 @@ func NewUserHandler(u _userUseCase.UserUseCaseInterface) UserHandler {
 func (uh *UserHandler) CreateUserHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		
+
 		var param _entities.User
 
 		errBind := c.Bind(&param)
@@ -69,11 +69,11 @@ func (uh *UserHandler) UpdateUserHandler() echo.HandlerFunc {
 		}
 
 		responseUser := map[string]interface{}{
-			"ID":           users.ID,
+			"id":           users.ID,
 			"name":         users.Name,
 			"email":        users.Email,
 			"phone_number": users.PhoneNumber,
-			"address": users.Address,
+			"address":      users.Address,
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update data", responseUser))
@@ -103,7 +103,6 @@ func (uh *UserHandler) DeleteUserHandler() echo.HandlerFunc {
 	}
 }
 
-
 func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
@@ -122,11 +121,11 @@ func (uh *UserHandler) GetUserByIdHandler() echo.HandlerFunc {
 		}
 
 		responseUser := map[string]interface{}{
-			"ID":           user.ID,
+			"id":           user.ID,
 			"name":         user.Name,
 			"email":        user.Email,
 			"phone_number": user.PhoneNumber,
-			"address": user.Address,
+			"address":      user.Address,
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get user by id", responseUser))
