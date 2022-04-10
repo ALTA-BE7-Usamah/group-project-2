@@ -45,6 +45,8 @@ group-project/limamart/usecase/cart/cart.go:97.28,99.3 1 1
 group-project/limamart/usecase/cart/cart.go:100.22,102.3 1 1
 group-project/limamart/usecase/cart/cart.go:103.34,105.3 1 1
 group-project/limamart/usecase/cart/cart.go:113.50,116.2 2 1
+group-project/limamart/usecase/catagory/catagory.go:12.112,16.2 1 1
+group-project/limamart/usecase/catagory/catagory.go:18.76,21.2 2 1
 group-project/limamart/usecase/order/order.go:17.206,23.2 1 1
 group-project/limamart/usecase/order/order.go:25.111,29.34 3 1
 group-project/limamart/usecase/order/order.go:39.2,39.35 1 1

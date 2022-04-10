@@ -53,13 +53,7 @@ func (uuc *CartUseCase) CreateCart(request _entities.Cart, idToken uint) (_entit
 	}
 	request.SubTotal = request.Qty * products.Price
 
-	carts, rows, err := uuc.cartRepository.GetAll(int(idToken))
-	if rows == 0 {
-		return request, errors.New("failed product by id")
-	}
-	if err != nil {
-		return request, err
-	}
+	carts, _, _ := uuc.cartRepository.GetAll(int(idToken))
 	for i := 0; i < len(carts); i++ {
 		if carts[i].ProductID == request.ProductID {
 			if carts[i].Qty+request.Qty > products.Stock {
