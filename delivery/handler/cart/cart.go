@@ -36,7 +36,27 @@ func (uh *CartHandler) GetAllHandler() echo.HandlerFunc {
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all carts", carts))
+
+		responseCarts := []map[string]interface{}{}
+		for i := 0; i < len(carts); i++ {
+			response := map[string]interface{}{
+				"id":         carts[i].ID,
+				"user_id":    carts[i].UserID,
+				"product_id": carts[i].ProductID,
+				"sub_total":  carts[i].SubTotal,
+				"product": map[string]interface{}{
+					"user_id":       carts[i].Product.UserID,
+					"catagory_id":   carts[i].Product.CatagoryID,
+					"product_title": carts[i].Product.ProductTitle,
+					"product_desc":  carts[i].Product.ProductDesc,
+					"price":         carts[i].Product.Price,
+					"stock":         carts[i].Product.Stock,
+					"url_product":   carts[i].Product.UrlProduct},
+			}
+			responseCarts = append(responseCarts, response)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all carts", responseCarts))
 	}
 }
 
@@ -88,7 +108,23 @@ func (uh *CartHandler) UpdateCartHandler() echo.HandlerFunc {
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update cart", carts))
+
+		responseCart := map[string]interface{}{
+			"id":         carts.ID,
+			"user_id":    carts.UserID,
+			"product_id": carts.ProductID,
+			"sub_total":  carts.SubTotal,
+			"product": map[string]interface{}{
+				"user_id":       carts.Product.UserID,
+				"catagory_id":   carts.Product.CatagoryID,
+				"product_title": carts.Product.ProductTitle,
+				"product_desc":  carts.Product.ProductDesc,
+				"price":         carts.Product.Price,
+				"stock":         carts.Product.Stock,
+				"url_product":   carts.Product.UrlProduct},
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success update cart", responseCart))
 	}
 }
 
@@ -120,6 +156,6 @@ func (uh *CartHandler) DeleteCartHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success delete cart", err))
+		return c.JSON(http.StatusOK, helper.ResponseSuccessWithoutData("success delete cart"))
 	}
 }

@@ -24,6 +24,17 @@ func (uh *CatagoryHandler) GetAllCatagoryHandler() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed("failed to fetch data"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all catagories", catagory))
+
+		responseCatagories := []map[string]interface{}{}
+		for i := 0; i < len(catagory); i++ {
+			response := map[string]interface{}{
+				"id":            catagory[i].ID,
+				"catagory_name": catagory[i].CatagoryName,
+				"product":       catagory[i].Product,
+			}
+			responseCatagories = append(responseCatagories, response)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all catagories", responseCatagories))
 	}
 }

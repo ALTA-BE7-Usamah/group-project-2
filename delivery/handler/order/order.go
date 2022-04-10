@@ -36,7 +36,28 @@ func (uh *OrderHandler) GetAllOrdersHandler() echo.HandlerFunc {
 		if rows == 0 {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFailed("data not found"))
 		}
-		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all orders", orders))
+
+		responseOrders := []map[string]interface{}{}
+		for i := 0; i < len(orders); i++ {
+			response := map[string]interface{}{
+				"id":          orders[i].ID,
+				"user_id":     orders[i].UserID,
+				"product_id":  orders[i].ProductID,
+				"total_price": orders[i].TotalPrice,
+				"status":      orders[i].Status,
+				"product": map[string]interface{}{
+					"user_id":       orders[i].Product.UserID,
+					"catagory_id":   orders[i].Product.CatagoryID,
+					"product_title": orders[i].Product.ProductTitle,
+					"price":         orders[i].Product.Price,
+					"stock":         orders[i].Product.Stock,
+					"url_product":   orders[i].Product.UrlProduct},
+			}
+
+			responseOrders = append(responseOrders, response)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseSuccess("success get all orders", responseOrders))
 	}
 }
 
@@ -48,7 +69,7 @@ func (uh *OrderHandler) CreateOrderHandler() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFailed("unauthorized"))
 		}
 
-		var orderRequest _entities.OrderRequestFormat
+		var orderRequest helper.OrderRequestFormat
 		err := c.Bind(&orderRequest)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFailed(err.Error()))
